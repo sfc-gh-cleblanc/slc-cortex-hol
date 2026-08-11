@@ -1,99 +1,235 @@
 import streamlit as st
 from components import render_session_header, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
 
-render_session_header(5, "CoWork", "25 min", "Collaborative AI analysis with CoWork")
+render_session_header(5, "Cortex Agents", "30 min", "Cortex Agent with semantic view + Cortex Search tools for portfolio analytics")
 
 render_technologies_used([
-    {"name": "Snowflake CoWork", "description": "An AI-powered collaborative workspace inside Snowsight where you can analyze data, generate insights, and share findings with your team — all through natural language conversation.", "icon": "group"},
-    {"name": "Agent Integration", "description": "CoWork leverages your Cortex Agents to answer questions. The CLAIMS_ANALYST_AGENT from Session 4 powers the data analysis capabilities.", "icon": "smart_toy"},
-    {"name": "Sharing & Collaboration", "description": "CoWork sessions can be shared with team members, creating a collaborative space for data exploration and decision-making.", "icon": "share"},
+    {"name": "Cortex Agent", "description": "An orchestrating AI that plans tasks, selects tools, executes them, reflects on results, and generates responses. Created as a first-class Snowflake object via the Snowsight UI.", "icon": "smart_toy"},
+    {"name": "Dual Tool Routing", "description": "The agent uses both a semantic view tool (for structured portfolio data) and a Cortex Search tool (for investment research documents) — routing each question to the appropriate tool automatically.", "icon": "route"},
+    {"name": "Agent Instructions", "description": "Custom instructions that define the agent's role, behavior, domain expertise, and response style. Shapes how the agent interprets and answers questions.", "icon": "edit_note"},
 ])
 
 st.markdown("---")
 
-st.markdown("#### :material/open_in_new: Open CoWork")
+st.markdown("#### :material/smart_toy: Create a Cortex Agent")
+
+st.markdown("""
+In this session, you'll create a Cortex Agent using the Snowsight UI. The agent will use both your semantic view from Session 4
+and the Cortex Search service from Session 3 as tools — enabling it to answer both structured portfolio questions
+and unstructured research document questions in a single conversational interface.
+""")
+
+st.write("")
+
+st.markdown("##### Step 1: Open the Agent Builder")
 with st.container(border=True):
     st.markdown("""
-Open Snowflake CoWork using one of these methods:
-
-- **In Snowsight:** Navigate to **AI & ML** in the left sidebar and select **Snowflake CoWork**
-- **In any browser:** Go to **[ai.snowflake.com](https://ai.snowflake.com)**
-
-Start a new conversation. CoWork will have access to the `CLAIMS_ANALYST_AGENT` you added in Session 4.
-
-Paste each question below into CoWork one at a time and observe how it generates queries and visualizations.
+1. In Snowsight, navigate to **AI & ML** in the left sidebar
+2. Click **Cortex Agents**
+3. Click **Create Agent** (or the **+** button)
 """)
 
 st.write("")
 
-st.markdown("#### :material/chat: Questions to ask CoWork")
-st.caption("Copy and paste each question into CoWork individually. They build on each other in sequence.")
-
-questions = [
-    ("1. Portfolio Overview", "Show me an overview of our dental claims portfolio — total claims processed, approval rate, average payout amount, and total dollars paid."),
-    ("2. Provider Outliers", "Which providers are billing significantly above average for common procedures like cleanings (D1110) and fillings (D2330, D2391)? Show me the outliers."),
-    ("3. Denial Patterns", "What are the most common denial reasons and which procedure categories have the highest denial rates? Are there patterns we should investigate?"),
-    ("4. Plan Comparison", "Compare claim outcomes across our plan types (PPO, HMO, DHMO, Indemnity). Which plans have the best approval rates and fastest adjudication?"),
-    ("5. Geographic Analysis", "Break down our claims by member state. Which states have the highest average claim amounts and denial rates?"),
-    ("6. Executive Summary", "Generate an executive summary of our dental claims operations that I could share with leadership. Include key metrics, trends, and the top 3 areas of concern."),
-]
-
-for i, (title, question) in enumerate(questions):
-    with st.container(border=True):
-        st.markdown(f"**{title}**")
-        st.code(question, language="text", wrap_lines=True)
-    if i == 0:
-        st.info("""
-:material/save: **Save the chart as an artifact:** After CoWork responds with a visualization, click the **Save** icon on the chart to save it as an artifact. Artifacts persist in your CoWork session and can be referenced later, shared with teammates, or added to reports.
-""")
-        st.success("""
-:material/verified: **Verified query in action:** This question matches the verified query we created in Session 3. Because Cortex Analyst recognizes the intent, it uses the pre-validated SQL rather than generating new SQL — giving you confidence that this result is accurate and trustworthy.
-""")
-
-st.info("""
-:material/lightbulb: **Tip — MCP Integration:** If CoWork were connected to your email system via MCP (Model Context Protocol) under **Capabilities**, you could ask it to automatically draft and send that executive summary directly to your key stakeholders — no copy-paste required. MCP connectors allow CoWork to take actions in external systems like email, Slack, Jira, and more, turning analysis into automated workflows.
+st.markdown("##### Step 2: Configure the agent")
+with st.container(border=True):
+    st.markdown("""
+1. Set the database to **SLC_PORTFOLIO_AI** and schema to **PORTFOLIO_ANALYTICS**
+2. Enter the object name: `PORTFOLIO_ANALYST_AGENT`
+3. Enter the display name: `Portfolio Analyst Agent`
+4. Click **Create agent**
 """)
 
 st.write("")
 
-render_explanation("How CoWork works", """
-**CoWork** is Snowflake's collaborative AI workspace. It uses your Cortex Agents to provide interactive data exploration.
+st.markdown("##### Step 3: Write agent instructions")
+with st.container(border=True):
+    st.markdown("""
+1. Click the **Configuration** tab
+2. Click the **Instructions** sub-tab
 
-**How CoWork differs from other tools**:
-- **Cortex Code**: Developer tool — executes SQL, creates objects, builds infrastructure
-- **CoWork**: Analyst tool — explores data, generates visualizations, shares insights
-- **Cortex Agent (direct)**: API/programmatic access to the agent
+**Orchestration instructions** — paste the following into the orchestration instructions box:
+""")
+    st.code("""You are a portfolio analytics assistant for Sun Life Capital. Your role is to help portfolio managers, analysts, and relationship managers understand client holdings, identify risk concentrations, surface investment signals, and answer questions about research documents.
 
-**What CoWork does with these questions**:
-1. Routes questions to your CLAIMS_ANALYST_AGENT
-2. The agent generates SQL via the semantic view
-3. Results are displayed with automatic visualizations
-4. Supports follow-up questions in context
+When answering questions:
+- Use the Portfolio Data tool for structured queries about positions, clients, performance, allocations, and analyst recommendations
+- Use the Investment Research tool for questions about research reports, investment memos, fund prospectuses, risk assessments, and compliance documents
+- When a question involves both data and research context (e.g., "What do we hold in Canadian banks and what does our research say about them?"), use both tools and synthesize the answer
+- Format currency amounts in CAD; note when values are in USD
+- Flag any concentration risk, unusual position sizes, or analyst sentiment changes
+- Be concise but thorough — include context that helps portfolio managers make decisions
 
-**Key capabilities**:
-- Creates charts and visualizations automatically
-- Maintains conversation context for follow-up questions
-- Can be shared with team members for collaborative analysis
-- Generates summaries and recommendations
+Domain context:
+- Account types: Pension, RRSP, RRIF, TFSA, Institutional, Non-Registered
+- Risk profiles: Conservative, Moderate, Balanced, Growth, Aggressive
+- Key metrics: unrealized gain/loss, portfolio drift from target allocation, recommendation distribution
+- Asset classes: Canadian Equity, US Equity, International Equity, Fixed Income, Real Estate, Infrastructure, Cash, Alternatives
+- Key benchmarks: S&P/TSX Composite, S&P 500, MSCI EAFE, FTSE Canada Universe Bond""", language="text", wrap_lines=True)
+    st.markdown("""
+**Response instructions** — paste the following into the response instructions box:
+""")
+    st.code("Always use charts and visualizations to show data whenever possible. Prefer bar charts for comparisons, line charts for trends over time, and tables for detailed breakdowns. When citing research documents, mention the source document name.", language="text", wrap_lines=True)
 
-**When to use CoWork vs. Cortex Code vs. Cortex Agent**:
-| Tool | Best for |
-|------|----------|
-| Cortex Code | Building infrastructure, creating objects, writing SQL |
-| CoWork | Exploring data, generating insights, team collaboration |
-| Cortex Agent | End-user Q&A interface (deployed as a product) |
+st.write("")
+
+st.markdown("##### Step 4: Add the semantic view as the Portfolio Data tool")
+with st.container(border=True):
+    st.markdown("""
+1. Click the **Tools** sub-tab (still under Configuration)
+2. Next to **Query structured data**, click the **+ Add semantic view** button
+3. Select `PORTFOLIO_ANALYTICS_VIEW` (the semantic view created in Session 4)
+4. Give the tool a name: `Portfolio Data`
+5. Click **Generate with Cortex** to create a detailed description for the tool
+6. Click **Add**
+""")
+
+st.write("")
+
+st.markdown("##### Step 5: Add the Cortex Search service as the Investment Research tool")
+with st.container(border=True):
+    st.markdown("""
+This step adds document search as a second tool — enabling the agent to answer questions about research reports,
+fund prospectuses, market commentary, and compliance documents.
+
+1. Still in the **Tools** sub-tab, click the **+ Add search** button next to **Search documents**
+2. Select `INVESTMENT_DOCS_SEARCH` (the Cortex Search service created in Session 3)
+3. Give the tool a name: `Investment Research`
+4. Click **Generate with Cortex** to generate a description — it should describe the 15 investment documents indexed
+5. Click **Add**
+
+Your agent now has two tools:
+- **Portfolio Data** — structured queries via Cortex Analyst
+- **Investment Research** — semantic search via Cortex Search
+""")
+
+st.markdown("""
+**All available agent tool types:**
+
+| Tool type | Description |
+|-----------|-------------|
+| **Query structured data** | Semantic views — the agent generates SQL via Cortex Analyst to answer data questions |
+| **Search documents** | Cortex Search services — retrieves relevant passages from unstructured document collections |
+| **Web search** | Enables the agent to search the internet for real-time information |
+| **Custom tools** | SQL UDFs or stored procedures — extend the agent with custom business logic or external API calls |
+
+Using both structured and document search tools together creates a much more capable agent than either alone.
+""")
+
+st.write("")
+
+st.markdown("##### Step 6: Add sample questions")
+with st.container(border=True):
+    st.markdown("""
+1. Click the **General** sub-tab (under Configuration)
+2. Click **Add question** for each of the following sample questions:
+""")
+    st.code("What is our total assets under management and how is it distributed by asset class?", language="text", wrap_lines=True)
+    st.code("Which clients have the highest concentration risk in a single security?", language="text", wrap_lines=True)
+    st.code("What do our research reports say about the outlook for Canadian banks?", language="text", wrap_lines=True)
+    st.code("Show me the distribution of analyst recommendations across our held securities", language="text", wrap_lines=True)
+
+st.write("")
+
+st.markdown("##### Step 7: Save the agent")
+with st.container(border=True):
+    st.markdown("""
+Click the **Save** button to save all your configuration — instructions, tools, and sample questions.
+The agent must be saved before it can be tested.
+""")
+
+st.write("")
+
+st.markdown("##### Step 8: Test the agent")
+with st.container(border=True):
+    st.markdown("""
+1. Click the **Preview** tab to open the agent's chat interface
+2. Test your agent by entering these queries one at a time — notice how the agent routes each to the appropriate tool:
+""")
+    test_queries = [
+        ("Structured data query", "What is our total portfolio value and how is it broken down by asset class?"),
+        ("Document search query", "What does our research say about the infrastructure investment thesis?"),
+        ("Cross-tool query", "What is our current exposure to Canadian bank stocks, and what do our analysts say about the outlook?"),
+        ("Risk query", "Which clients have unrealized losses greater than 20% and what positions are driving it?"),
+        ("Document + risk", "What ESG screening criteria updates should I be aware of for our equity holdings?"),
+    ]
+    for label, query in test_queries:
+        with st.container(border=True):
+            st.markdown(f"**{label}**")
+            st.code(query, language="text", wrap_lines=True)
+    st.markdown("""
+Observe how the agent:
+- Routes pure data questions to the Portfolio Data (semantic view) tool
+- Routes document questions to the Investment Research (Cortex Search) tool
+- Uses **both tools** for cross-tool questions, then synthesizes a combined answer
+""")
+
+st.write("")
+
+st.markdown("##### Step 9: Add to Snowflake CoWork")
+with st.container(border=True):
+    st.markdown("""
+Click the **+ Add to Snowflake CoWork** button to make this agent accessible within CoWork.
+
+**Why this is required:** By default, a Cortex Agent is a Snowflake object callable via SQL or REST API, but not automatically surfaced in CoWork. Adding it to CoWork registers the agent as an available assistant — which is what we'll use in Session 6.
+
+**Methods to access agents:**
+
+| Access method | Use case |
+|---------------|----------|
+| **CoWork** | Collaborative data exploration with team members |
+| **REST API** | Embed the agent in external applications or custom UIs |
+| **SQL (CORTEX.AGENT)** | Call the agent programmatically from SQL, stored procedures, or notebooks |
+| **Streamlit apps** | Build custom chat interfaces powered by the agent (Session 7) |
+""")
+
+st.markdown("---")
+st.markdown("---")
+
+render_explanation("How the agent routes between tools", """
+**Tool routing** is one of the most powerful capabilities of Cortex Agents. Here's how it works with two tools:
+
+1. **User question received**: "What do we hold in Canadian banks and what does our research say?"
+2. **Intent analysis**: The agent recognizes this involves both (a) portfolio holdings data and (b) research document content
+3. **Tool planning**: It decides to call both the Portfolio Data tool and the Investment Research tool
+4. **Parallel or sequential execution**: Calls Cortex Analyst on the semantic view for holdings data, and Cortex Search for research passages
+5. **Synthesis**: Combines the structured data response and the search results into a coherent answer
+
+**How the agent decides which tool to use**:
+- The tool **description** is critical — the agent uses it to match questions to tools
+- Explicit signals in the question ("what does our research say") point to the search tool
+- Questions containing numbers, aggregations, or comparisons point to the data tool
+- Ambiguous questions may trigger both tools
+
+**Why this matters for portfolio management**:
+An analyst asking "Should we increase our NVDA position?" needs:
+- **Structured data**: Current position size, client exposure, unrealized P&L
+- **Research documents**: Analyst reports, investment memos, risk assessments
+
+A single agent with both tools answers the full question without the analyst switching between systems.
 """)
 
 
 render_key_concepts([
-    {"term": "CoWork", "definition": "Snowflake's collaborative AI workspace for data exploration. Provides a conversational interface that queries data, creates visualizations, and generates insights. Designed for business analysts and team collaboration."},
-    {"term": "Collaborative Intelligence", "definition": "The pattern where AI assists a team in making decisions together. CoWork sessions can be shared, allowing multiple people to ask questions, build on each other's analysis, and reach conclusions collectively."},
-    {"term": "Context Maintenance", "definition": "CoWork maintains conversation history so follow-up questions build on previous analysis. Ask 'Show me claims by status' then 'Now filter to just denied' — it remembers the context."},
+    {"term": "Cortex Agent", "definition": "A first-class Snowflake object that orchestrates LLMs and tools to answer complex questions. Supports planning, tool use, reflection, and multi-turn conversations. Created via UI or CREATE AGENT SQL."},
+    {"term": "Tool Routing", "definition": "The agent's ability to select the appropriate tool for each question, based on the tool descriptions and question intent. With a semantic view + Cortex Search, the agent routes data questions to SQL and document questions to search."},
+    {"term": "Cross-Tool Synthesis", "definition": "When the agent calls multiple tools in response to a single question, it synthesizes the results into a unified response. This enables answers that combine quantitative data and qualitative research context."},
+    {"term": "Agent Instructions", "definition": "A system prompt that defines the agent's role, behavior, domain expertise, and response style. Good instructions lead to more accurate tool routing, better formatted responses, and domain-appropriate context."},
+])
+
+st.write("")
+
+st.markdown("##### :material/science: Advanced topics (not covered in this workshop)")
+
+render_key_concepts([
+    {"term": "Agent Evaluations", "definition": "A systematic process for measuring agent quality. Evaluations run a set of test questions against your agent and score responses on metrics like correctness, relevance, and SQL accuracy. They help you quantify improvements when you change instructions, add tools, or modify the semantic view."},
+    {"term": "Agent Observability", "definition": "Monitoring and tracing how your agent performs in production. Observability tracks response latency, tool call frequency, error rates, and user satisfaction. Trace-level visibility shows which tools were called, what SQL was generated, and where failures occur."},
 ])
 
 render_what_you_built([
-    "Explored claims data through conversational AI in CoWork",
-    "Generated visualizations and cross-table analysis",
-    "Identified provider outliers and denial patterns",
-    "Created an executive summary of claims operations health",
+    "PORTFOLIO_ANALYST_AGENT — Cortex Agent with semantic view + Cortex Search tools",
+    "Dual-tool routing for structured data and document research questions",
+    "Custom instructions for capital management domain expertise",
+    "Tested cross-tool queries combining portfolio data and investment research",
+    "Agent ready for CoWork integration (Session 6)",
 ])

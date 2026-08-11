@@ -1,177 +1,111 @@
 import streamlit as st
-from components import render_session_header, render_prompt, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
+from components import render_session_header, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
 
-render_session_header(6, "Streamlit", "30 min", "Claims dashboard with KPIs, charts, and AI-powered insights")
+render_session_header(6, "CoWork", "25 min", "Collaborative AI analysis of portfolio data and investment research")
 
 render_technologies_used([
-    {"name": "Streamlit in Snowflake (SiS)", "description": "Deploy Python-based data apps directly within Snowflake. Apps run on container runtime with full Python package support, access data natively via Snowpark, and inherit Snowflake's security model.", "icon": "web"},
-    {"name": "Compute Pool", "description": "A managed pool of container nodes that powers SiS apps. Provides CPU/GPU resources, auto-scales, and supports any Python package from pip.", "icon": "memory"},
-    {"name": "AI SQL Functions in Apps", "description": "Use Cortex AI functions (AI_CLASSIFY, AI_EXTRACT) directly within Streamlit apps to provide real-time AI-powered insights alongside traditional KPIs and charts.", "icon": "auto_fix_high"},
+    {"name": "Snowflake CoWork", "description": "An AI-powered collaborative workspace inside Snowsight where you can analyze data, generate insights, and share findings with your team — all through natural language conversation.", "icon": "group"},
+    {"name": "Agent Integration", "description": "CoWork leverages your Cortex Agents to answer questions. The PORTFOLIO_ANALYST_AGENT from Session 5 powers both data analytics and research document search.", "icon": "smart_toy"},
+    {"name": "Sharing & Collaboration", "description": "CoWork sessions can be shared with team members, creating a collaborative space for portfolio review and investment decision support.", "icon": "share"},
 ])
 
 st.markdown("---")
 
-st.markdown("#### :material/open_in_new: Open Workspaces")
+st.markdown("#### :material/open_in_new: Open CoWork")
 with st.container(border=True):
     st.markdown("""
-For this section, open **Workspaces** in Snowsight (left navigation panel > Projects > Workspaces). Workspaces provides an IDE-like environment where Cortex Code can create and edit Streamlit app files directly.
+Open Snowflake CoWork using one of these methods:
 
-Paste the prompts below into Cortex Code **within Workspaces** so the generated code is written directly into your app files.
-""")
+- **In Snowsight:** Navigate to **AI & ML** in the left sidebar and select **Snowflake CoWork**
+- **In any browser:** Go to **[ai.snowflake.com](https://ai.snowflake.com)**
 
+Start a new conversation. CoWork will have access to the `PORTFOLIO_ANALYST_AGENT` you added in Session 5.
 
-PROMPT_6_1 = """In DENTAL_CLAIMS_AI.CLAIMS_ANALYTICS, create a Streamlit app called CLAIMS_DASHBOARD. This Dashboard should display the following:
-
-- KPI cards at the top showing: Total Claims (from CLAIMS), Approval Rate (% with status 'Approved'), Avg Days to Adjudicate (DATEDIFF between DATE_OF_SERVICE and ADJUDICATION_DATE for processed claims), Total Paid (SUM of PAID_AMOUNT)
-- A pie chart showing claims by status (Approved, Denied, Pending, In Review)
-- A bar chart of top 10 procedures by total billed amount (join CLAIMS to DENTAL_PROCEDURES for procedure descriptions)
-- A line chart showing monthly claim volume over time
-- An AI Insights section at the bottom that uses AI_CLASSIFY on 5 recent claim notes to show real-time claim categorization
-
-Include a tab in the dashboard that gives descriptions of each of the metrics, where the data is coming from and how often it is updated.
-
-Use st.connection("snowflake") for the Snowflake connection and make it visually clean with st.columns for layout."""
-
-render_prompt("6.1", "Create the Streamlit App", PROMPT_6_1)
-
-render_explanation("What this prompt does", """
-Creates a full **Streamlit in Snowflake** application on the **container runtime**:
-
-**Step 1 — Compute pool**:
-```sql
-CREATE COMPUTE POOL CLAIMS_COMPUTE_POOL
-  MIN_NODES = 1 MAX_NODES = 1
-  INSTANCE_FAMILY = CPU_X64_S;
-```
-
-**Step 2 — External Access Integration** (so container can install pip packages):
-```sql
-CREATE NETWORK RULE pypi_network_rule
-  MODE = EGRESS TYPE = HOST_PORT
-  VALUE_LIST = ('pypi.org', 'files.pythonhosted.org');
-
-CREATE EXTERNAL ACCESS INTEGRATION pypi_access_integration
-  ALLOWED_NETWORK_RULES = (pypi_network_rule) ENABLED = TRUE;
-```
-
-**Step 3 — Stage files and deploy**:
-- Write streamlit_app.py and pyproject.toml to a stage
-- Create the Streamlit object on the compute pool
-
-**Dashboard pattern**:
-```python
-conn = st.connection("snowflake")
-session = conn.session()
-claims_df = session.sql("SELECT COUNT(*) as total FROM CLAIMS").collect()
-st.metric("Total Claims", f"{claims_df[0]['TOTAL']:,}")
-```
-
-**AI Insights section** uses AI_CLASSIFY directly in the app:
-```python
-insights = session.sql(\"\"\"
-    SELECT note_id, LEFT(note_text, 50) as preview,
-           AI_CLASSIFY(note_text, ['Routine', 'Emergency', 'Surgical']) as category
-    FROM CLAIM_NOTES ORDER BY CREATED_DATE DESC LIMIT 5
-\"\"\").to_pandas()
-st.dataframe(insights)
-```
-
-**Key advantages of SiS**:
-- **No data movement**: App runs inside Snowflake
-- **Security**: Inherits user's role and permissions
-- **No infrastructure**: Compute pool auto-manages lifecycle
-- **AI-native**: Call Cortex functions directly from app code
-""")
-
-
-PROMPT_6_2 = """Fix the errors shown on this dashboard"""
-
-st.markdown("##### 6.2 — Test and Fix Errors")
-
-with st.container(border=True):
-    st.markdown("""
-1. Open the `streamlit_app.py` file in the Workspaces editor
-2. Click **Run** in the top-right to preview the dashboard
-
-**Are there any errors?** It's common for the Streamlit skill to assume packages are available that aren't yet installed, or to reference columns slightly differently than expected. If you see errors on the dashboard:
-
-3. Paste the following into Cortex Code:
-""")
-    st.code("Fix the errors shown on this dashboard", language="text", wrap_lines=True)
-    st.markdown("""
-4. Click **Keep All** to accept all of the code updates Cortex Code suggests
-5. Click **Run** again in the code page to reload the dashboard
-6. Repeat steps 3-5 if any errors remain — keep iterating until the dashboard loads cleanly
+Paste each question below into CoWork one at a time and observe how it generates queries, searches documents, and produces visualizations.
 """)
 
 st.write("")
 
-st.markdown("##### 6.3 — Deploy Your App")
+st.markdown("#### :material/chat: Questions to ask CoWork")
+st.caption("Copy and paste each question into CoWork individually. They build on each other in sequence.")
 
-with st.container(border=True):
-    st.markdown("""
-Once the dashboard is running without errors, deploy it so others can discover and use it:
+questions = [
+    ("1. Portfolio Overview",
+     "Show me a summary of our assets under management — total portfolio value, number of active clients, average portfolio size by account type, and the top 5 asset classes by total value."),
+    ("2. Concentration Risk",
+     "Which securities represent more than 5% of any single client's total portfolio value? Show me concentration risk by client and security, ranked by severity."),
+    ("3. Analyst Sentiment",
+     "What is the current distribution of analyst recommendations (Buy, Hold, Sell, Overweight, Underweight) across our held securities? Are there any securities where the analyst rating appears inconsistent with our current position size?"),
+    ("4. Research: Infrastructure",
+     "Search our investment research documents for the infrastructure allocation thesis. What were the key reasons for increasing the infrastructure weight, and what risks were identified?"),
+    ("5. Asset Allocation Drift",
+     "Compare our current asset class allocations to the target allocations from the ASSET_CLASSES table. Which asset classes are most over- or under-weight? What trades would bring us back within the tolerance bands?"),
+    ("6. Executive Summary",
+     "Generate an executive summary of our portfolio health that I could share with the Investment Committee. Include total AUM, top concentration risks, analyst sentiment overview, and two or three key items from our recent research documents."),
+]
 
-1. Click the **Deploy** button in the top-right of the Workspaces editor
-2. Select the database: **DENTAL_CLAIMS_AI**
-3. Select the schema: **CLAIMS_ANALYTICS**
-4. Click **Deploy** to publish
-
-Once deployed, the app becomes a first-class Snowflake object. Other users in your account can discover it from the **Projects > Streamlit** menu in Snowsight and access it based on their role permissions.
+for i, (title, question) in enumerate(questions):
+    with st.container(border=True):
+        st.markdown(f"**{title}**")
+        st.code(question, language="text", wrap_lines=True)
+    if i == 0:
+        st.info("""
+:material/save: **Save the chart as an artifact:** After CoWork responds with a visualization, click the **Save** icon on the chart to save it as an artifact. Artifacts persist in your CoWork session and can be shared with teammates.
+""")
+    if i == 1:
+        st.success("""
+:material/verified: **Verified query in action:** This question matches the verified query we created in Session 4. Cortex Analyst uses the pre-validated SQL rather than generating new SQL — giving you confidence the result is accurate.
+""")
+    if i == 3:
+        st.info("""
+:material/search: **Document search in action:** This question cannot be answered from the structured tables — it requires searching the investment documents indexed in Cortex Search. Watch how the agent automatically routes this to the Investment Research tool.
 """)
 
 st.info("""
-:material/lightbulb: **Sharing your app:** After deployment, grant access to other roles:
-```sql
-GRANT USAGE ON STREAMLIT DENTAL_CLAIMS_AI.CLAIMS_ANALYTICS.CLAIMS_DASHBOARD TO ROLE <role_name>;
-```
-This is how teams publish internal data apps — analysts build in Workspaces, deploy to a shared schema, and stakeholders access via the Streamlit projects menu.
-""")
-
-render_explanation("Troubleshooting tips", """
-**Common errors and fixes:**
-
-- **ModuleNotFoundError** (e.g., `plotly`, `pandas`) — The app references a package not installed in Workspaces. Cortex Code will add the missing import or switch to a built-in Streamlit chart method.
-- **Column not found** — The SQL references a column name with wrong casing or spelling. Cortex Code will query INFORMATION_SCHEMA to find the correct name.
-- **Connection errors** — Ensure `st.connection("snowflake")` is used (not `snowflake.connector`).
-
-**The iterative pattern:** In Workspaces, you can continuously prompt Cortex Code to fix issues, accept changes, and re-run — this rapid feedback loop is how production Streamlit apps are built and refined.
-
-This completes the workshop — you've built a full AI-powered claims analytics platform from data loading through to a deployed application!
+:material/lightbulb: **Tip — MCP Integration:** If CoWork were connected to your email system via MCP (Model Context Protocol) under **Capabilities**, you could ask it to automatically draft and send that executive summary directly to the Investment Committee — no copy-paste required. MCP connectors allow CoWork to take actions in external systems like email, Slack, Jira, and more, turning analysis into automated workflows.
 """)
 
 st.write("")
 
-st.markdown("---")
+render_explanation("How CoWork works with multiple agent tools", """
+**CoWork** uses your PORTFOLIO_ANALYST_AGENT, which has two tools. Here's how it handles different question types:
 
-st.markdown("#### :material/star: Bonus: Add an AI Chat Interface")
+**Structured data questions** (Questions 1, 2, 3, 5):
+1. CoWork routes the question to the PORTFOLIO_ANALYST_AGENT
+2. The agent determines a semantic view query is needed
+3. Cortex Analyst generates SQL against PORTFOLIO_ANALYTICS_VIEW
+4. Results are displayed with automatic visualizations
 
-with st.container(border=True):
-    st.markdown("""
-Want to take your dashboard further? Add a chat box that lets users ask natural language questions about the data, powered by `AI_COMPLETE`.
+**Document search questions** (Question 4):
+1. CoWork routes the question to the agent
+2. The agent determines Cortex Search is the right tool
+3. INVESTMENT_DOCS_SEARCH returns the most relevant document chunks
+4. The agent synthesizes a natural language summary from the retrieved passages
 
-Using what you've learned, write a prompt for Cortex Code in Workspaces that adds an "Ask AI" tab with a conversational chat interface. Consider:
-- Using `st.chat_input` and `st.chat_message` for the UI
-- Calling `SNOWFLAKE.CORTEX.COMPLETE` with a model like `claude-sonnet-4-6`
-- Passing current KPI values as context so the model can reference actual data
-- Maintaining chat history in `st.session_state`
+**Mixed questions** (Question 6 — Executive Summary):
+1. The agent decides it needs both tools
+2. Calls Cortex Analyst for quantitative metrics (AUM, drift, sentiment distribution)
+3. Calls Cortex Search for relevant research document passages
+4. Synthesizes all results into a coherent executive narrative
 
-After adding, click **Keep All** and **Run** to test. This demonstrates how `AI_COMPLETE` can power conversational interfaces directly within Streamlit apps — giving users an AI assistant embedded alongside their operational dashboards.
+**What CoWork adds over direct Cortex Analyst or Cortex Search**:
+- Maintains conversation context for follow-up questions
+- Can combine answers from multiple tools in a single response
+- Generates charts and visualizations automatically
+- Session can be shared with team members for collaborative review
 """)
-
-st.markdown("---")
 
 
 render_key_concepts([
-    {"term": "Container Runtime", "definition": "The current SiS execution environment. Apps run on a compute pool, support any Python package via pip, and use versioned stage syntax. Replaces the legacy warehouse runtime."},
-    {"term": "Compute Pool", "definition": "A managed pool of container nodes. Choose an instance family (CPU_X64_S, GPU_NV_S, etc.), set min/max nodes, and Snowflake handles provisioning and scaling."},
-    {"term": "External Access Integration", "definition": "Required for container runtime apps that install pip packages. Container nodes can't reach the internet by default — you must allow egress to pypi.org via network rules."},
-    {"term": "AI Functions in Apps", "definition": "Cortex AI functions (AI_CLASSIFY, AI_EXTRACT, AI_COMPLETE) can be called directly from Streamlit app SQL queries, enabling real-time AI-powered features without external services."},
+    {"term": "CoWork", "definition": "Snowflake's collaborative AI workspace for data exploration. Provides a conversational interface that queries data, searches documents, creates visualizations, and generates insights. Designed for business analysts and team collaboration."},
+    {"term": "Multi-Tool Agent in CoWork", "definition": "When the underlying agent has multiple tools (semantic view + Cortex Search), CoWork automatically benefits from both. Questions about data go to structured analytics; questions about research go to document search."},
+    {"term": "Context Maintenance", "definition": "CoWork maintains conversation history so follow-up questions build on previous analysis. Ask 'Show concentration risk by client' then 'Now filter to just Pension accounts' — it remembers the context."},
 ])
 
 render_what_you_built([
-    "CLAIMS_COMPUTE_POOL — compute pool for container runtime",
-    "CLAIMS_DASHBOARD — Streamlit app with KPIs and charts",
-    "Claims operations dashboard with approval rates, volume trends, and top procedures",
-    "AI Insights section using AI_CLASSIFY for real-time claim categorization",
+    "Explored portfolio data through conversational AI in CoWork",
+    "Generated visualizations and cross-table analysis",
+    "Searched investment research documents for qualitative context",
+    "Identified concentration risks and allocation drift",
+    "Created an executive portfolio summary combining data and research",
 ])

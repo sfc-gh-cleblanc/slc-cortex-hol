@@ -1,0 +1,9 @@
+ASSET_CLASS_ID,NAME,DESCRIPTION,RISK_LEVEL,BENCHMARK,TARGET_ALLOCATION_PCT
+AC001,Canadian Equity,Publicly traded equities listed on Canadian exchanges. Core domestic growth exposure.,Medium,S&P/TSX Composite,30.0
+AC002,US Equity,Large and mid-cap US equities. Growth-oriented with USD currency exposure.,Medium-High,S&P 500,20.0
+AC003,International Equity,Developed and emerging market equities outside North America.,Medium-High,MSCI EAFE,10.0
+AC004,Fixed Income,"Government, provincial, and investment-grade corporate bonds. Capital preservation.",Low,FTSE Canada Universe Bond,25.0
+AC005,Real Estate,REITs and real property investments. Income and inflation protection.,Medium,S&P/TSX Capped REIT,5.0
+AC006,Infrastructure,"Utilities, pipelines, transportation, and communications. Stable income.",Low-Medium,S&P Global Infrastructure,5.0
+AC007,Cash,High-interest savings ETFs and money market instruments. Liquidity reserve.,Very Low,CDOR,2.0
+AC008,Alternatives,"Commodities, crypto, hedge fund strategies, and private market exposures.",High,Custom Blended,3.0

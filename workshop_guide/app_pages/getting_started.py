@@ -9,7 +9,7 @@ st.markdown("#### Step 1: Sign up for a free trial")
 
 with st.container(border=True):
     st.markdown("""
-Go to **[signup.snowflake.com](https://signup.snowflake.com/?t=0b12bc1bb793241db3f0dc38d8028580cb8f77a111f2359704a5e2707182aa1a)** and fill out the registration form with your name, email, and company.
+Go to **[signup.snowflake.com](https://signup.snowflake.com/?t=49e2a91f2e4521ae09ff7340d874725edc176467b18cc6a7374f5e518c9902e3)** and fill out the registration form with your name, email, and company.
 
 Leave the trial type set to **AI Data Cloud For Enterprise** (the default). We will be using Cortex Code within Snowsight — the "Developers" option includes a locally installed IDE component which is not required for this workshop.
 

@@ -1,7 +1,7 @@
 import streamlit as st
 
-st.title("Health Insurance Claims AI Workshop")
-st.markdown("Building Intelligence for Claims Analysis with Snowflake Cortex")
+st.title("Capital Management AI Workshop")
+st.markdown("Building Intelligence for Portfolio Analytics with Snowflake Cortex")
 
 st.write("")
 
@@ -11,7 +11,7 @@ st.markdown("""
 This guide provides **step-by-step instructions** for each session. You'll work through a mix of:
 
 - **Cortex Code prompts** — copy into Cortex Code to build infrastructure and write SQL/Python
-- **Snowsight UI walkthroughs** — follow guided steps to create semantic views and agents
+- **Snowsight UI walkthroughs** — follow guided steps to create semantic views, search services, and agents
 - **Interactive exploration** — paste questions into CoWork for collaborative analysis
 
 All sections build on each other sequentially — work through them in order.
@@ -22,17 +22,18 @@ st.write("")
 st.markdown("#### The scenario")
 with st.container(border=True):
     st.markdown("""
-A dental insurance company processes millions of claims annually. Claims analysts need to
-extract insights from clinical notes, identify patterns in denials, monitor provider performance, and
-detect potential fraud or waste — all while maintaining fast adjudication turnaround times.
+Sun Life Capital manages pension plans, registered accounts (RRSP, RRIF, TFSA), and institutional portfolios
+on behalf of thousands of Canadian clients. Portfolio managers and analysts need to track position-level performance,
+extract insights from investment research documents, monitor risk concentrations, and surface timely recommendations
+— all while handling a growing volume of unstructured research reports, compliance notes, and market commentary.
 
-We'll build a complete AI-powered claims intelligence platform covering:
+We'll build a complete AI-powered portfolio intelligence platform covering:
 
 | Data type | Examples |
 |-----------|---------|
-| **Structured** | Member enrollment, claims, providers, dental procedures, adjudication outcomes |
-| **Unstructured** | Clinical narratives, adjuster notes, member appeals, EOB documents |
-| **Reference** | CDT procedure codes, plan types, provider networks |
+| **Structured** | Client accounts, portfolio positions, securities reference, asset class benchmarks, analyst recommendations |
+| **Unstructured** | Research reports, investment memos, fund prospectuses, market commentary, risk assessments, compliance notes |
+| **Reference** | Asset class definitions, benchmark indices, risk profiles |
 """)
 
 st.write("")
@@ -41,19 +42,21 @@ st.markdown("#### What we're building")
 
 with st.container(border=True):
     st.markdown("""
-In this workshop, we build a complete AI-powered claims analytics platform:
+In this workshop, we build a complete AI-powered portfolio analytics platform:
 
-**1. Data Foundation** — Load structured claims data and unstructured clinical documents into Snowflake.
+**1. Data Foundation** — Load structured portfolio data and upload investment research documents into Snowflake.
 
-**2. AI-Powered Extraction** — Use Cortex AI functions (AI_EXTRACT, AI_CLASSIFY, AI_COMPLETE) to transform unstructured claim notes and documents into queryable structured data at scale.
+**2. AI-Powered Extraction** — Use Cortex AI functions (AI_EXTRACT, AI_CLASSIFY, AI_COMPLETE) to transform unstructured analyst notes and investment documents into queryable structured data at scale.
 
-**3. Natural Language Analytics** — Create a Semantic View over claims tables using the Autopilot and query them with plain English via Cortex Analyst.
+**3. Cortex Search** — Parse and chunk PDF investment documents, then create a Cortex Search service that enables semantic search across research reports, fund prospectuses, and compliance documents.
 
-**4. AI Agents** — Create a Cortex Agent that provides self-service claims analytics through a conversational interface.
+**4. Natural Language Analytics** — Create a Semantic View over portfolio tables using the Autopilot and query them with plain English via Cortex Analyst.
 
-**5. Collaborative Analysis** — Use CoWork to explore claims data collaboratively with AI assistance.
+**5. AI Agents** — Create a Cortex Agent that combines structured portfolio analytics with document search for self-service portfolio intelligence.
 
-**6. Operations Dashboard** — Deploy a Streamlit app with live KPIs, charts, and AI-powered insights.
+**6. Collaborative Analysis** — Use CoWork to explore portfolio data and research documents collaboratively with AI assistance.
+
+**7. Operations Dashboard** — Deploy a Streamlit app with live KPIs, charts, and AI-powered investment insights.
 """)
 
 st.write("")
@@ -67,4 +70,4 @@ with st.container(border=True):
 """)
 
 st.write(""); st.write("")
-st.caption("Dental Claims AI Workshop — July 20, 2026")
+st.caption("Sun Life Capital Management AI Workshop — TBD")

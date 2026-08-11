@@ -1,0 +1,51 @@
+SECURITY_ID,TICKER,NAME,ASSET_CLASS,SECTOR,EXCHANGE,CURRENCY,COUNTRY,BETA,DIVIDEND_YIELD
+SEC001,RY,Royal Bank of Canada,Canadian Equity,Financials,TSX,CAD,Canada,0.82,4.1
+SEC002,TD,Toronto-Dominion Bank,Canadian Equity,Financials,TSX,CAD,Canada,0.79,4.3
+SEC003,BNS,Bank of Nova Scotia,Canadian Equity,Financials,TSX,CAD,Canada,0.85,6.2
+SEC004,BMO,Bank of Montreal,Canadian Equity,Financials,TSX,CAD,Canada,0.83,4.8
+SEC005,ENB,Enbridge Inc,Canadian Equity,Energy,TSX,CAD,Canada,0.75,7.4
+SEC006,CNQ,Canadian Natural Resources,Canadian Equity,Energy,TSX,CAD,Canada,1.12,4.6
+SEC007,SU,Suncor Energy,Canadian Equity,Energy,TSX,CAD,Canada,1.18,4.8
+SEC008,CP,Canadian Pacific Kansas City,Canadian Equity,Industrials,TSX,CAD,Canada,0.93,0.7
+SEC009,TRI,Thomson Reuters,Canadian Equity,Technology,TSX,CAD,Canada,0.88,1.2
+SEC010,BCE,BCE Inc,Canadian Equity,Telecommunications,TSX,CAD,Canada,0.62,8.9
+SEC011,AAPL,Apple Inc,US Equity,Technology,NASDAQ,USD,United States,1.24,0.5
+SEC012,MSFT,Microsoft Corporation,US Equity,Technology,NASDAQ,USD,United States,1.18,0.7
+SEC013,NVDA,NVIDIA Corporation,US Equity,Technology,NASDAQ,USD,United States,2.05,0.03
+SEC014,AMZN,Amazon.com Inc,US Equity,Consumer Discretionary,NASDAQ,USD,United States,1.42,0.0
+SEC015,JPM,JPMorgan Chase,US Equity,Financials,NYSE,USD,United States,1.05,2.2
+SEC016,JNJ,Johnson & Johnson,US Equity,Healthcare,NYSE,USD,United States,0.61,2.9
+SEC017,XOM,ExxonMobil Corporation,US Equity,Energy,NYSE,USD,United States,0.98,3.3
+SEC018,V,Visa Inc,US Equity,Financials,NYSE,USD,United States,0.99,0.7
+SEC019,UNH,UnitedHealth Group,US Equity,Healthcare,NYSE,USD,United States,0.72,1.4
+SEC020,PG,Procter & Gamble,US Equity,Consumer Staples,NYSE,USD,United States,0.56,2.3
+SEC021,NESN,Nestle SA,International Equity,Consumer Staples,SIX,CHF,Switzerland,0.68,2.8
+SEC022,SAP,SAP SE,International Equity,Technology,XETRA,EUR,Germany,0.91,1.4
+SEC023,SHEL,Shell PLC,International Equity,Energy,LON,GBP,United Kingdom,0.88,3.9
+SEC024,NOVO,Novo Nordisk,International Equity,Healthcare,CPH,DKK,Denmark,0.77,1.1
+SEC025,ASML,ASML Holding,International Equity,Technology,NASDAQ,EUR,Netherlands,1.32,0.8
+SEC026,CAN.GOV.2Y,Government of Canada 2-Year Bond,Fixed Income,Government,OTC,CAD,Canada,0.0,0.0
+SEC027,CAN.GOV.10Y,Government of Canada 10-Year Bond,Fixed Income,Government,OTC,CAD,Canada,0.0,0.0
+SEC028,PROV.ON.5Y,Province of Ontario 5-Year Bond,Fixed Income,Provincial,OTC,CAD,Canada,0.0,0.0
+SEC029,CORP.BOND.A,Investment Grade Corporate Bond ETF,Fixed Income,Corporate,TSX,CAD,Canada,0.22,4.1
+SEC030,HYG,iShares High Yield Bond ETF,Fixed Income,High Yield,NYSE,USD,United States,0.31,5.8
+SEC031,REI,RioCan REIT,Real Estate,Retail,TSX,CAD,Canada,0.71,5.6
+SEC032,CRT,CT Real Estate REIT,Real Estate,Retail,TSX,CAD,Canada,0.65,6.2
+SEC033,AP,Allied Properties REIT,Real Estate,Office,TSX,CAD,Canada,0.78,6.8
+SEC034,IIP,Interrent REIT,Real Estate,Residential,TSX,CAD,Canada,0.82,2.9
+SEC035,AQN,Algonquin Power & Utilities,Infrastructure,Utilities,TSX,CAD,Canada,0.58,7.2
+SEC036,BIP,Brookfield Infrastructure,Infrastructure,Diversified,TSX,CAD,Canada,0.67,3.8
+SEC037,TRP,TC Energy,Infrastructure,Pipelines,TSX,CAD,Canada,0.71,6.9
+SEC038,FTS,Fortis Inc,Infrastructure,Utilities,TSX,CAD,Canada,0.54,4.1
+SEC039,GOLD.ETF,iShares Gold Bullion ETF,Alternatives,Commodities,TSX,CAD,Canada,0.12,0.0
+SEC040,HBF,Horizons Bitcoin ETF,Alternatives,Cryptocurrency,TSX,CAD,Canada,3.45,0.0
+SEC041,GSY,goeasy Ltd,Canadian Equity,Financials,TSX,CAD,Canada,1.45,3.2
+SEC042,MFC,Manulife Financial,Canadian Equity,Financials,TSX,CAD,Canada,0.91,4.8
+SEC043,SLF,Sun Life Financial,Canadian Equity,Financials,TSX,CAD,Canada,0.88,3.9
+SEC044,POW,Power Corporation,Canadian Equity,Financials,TSX,CAD,Canada,0.79,5.1
+SEC045,GWO,Great-West Lifeco,Canadian Equity,Financials,TSX,CAD,Canada,0.84,4.7
+SEC046,BAM,Brookfield Asset Management,Canadian Equity,Financials,TSX,CAD,Canada,1.08,2.9
+SEC047,CASH.ETF,Purpose High Interest Savings ETF,Cash,Money Market,TSX,CAD,Canada,0.0,5.1
+SEC048,XAW,iShares Core MSCI All Country ETF,International Equity,Diversified,TSX,CAD,Canada,1.05,1.8
+SEC049,VEA,Vanguard FTSE Developed Markets ETF,International Equity,Diversified,NYSE,USD,United States,0.88,2.6
+SEC050,ZRE,BMO Equal Weight REITs ETF,Real Estate,Diversified,TSX,CAD,Canada,0.74,5.2

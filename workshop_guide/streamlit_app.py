@@ -13,8 +13,8 @@ def _title(session_num: int, label: str) -> str:
 
 
 st.set_page_config(
-    page_title="Health Insurance Claims AI Workshop",
-    page_icon=":material/health_and_safety:",
+    page_title="Capital Management AI Workshop",
+    page_icon=":material/trending_up:",
     layout="wide",
 )
 
@@ -33,12 +33,13 @@ page = st.navigation(
         "Block 1: Data & Intelligence": [
             st.Page("app_pages/session_01.py", title=_title(1, "Data Prep"), icon=":material/database:"),
             st.Page("app_pages/session_02.py", title=_title(2, "AI SQL"), icon=":material/auto_fix_high:"),
-            st.Page("app_pages/session_03.py", title=_title(3, "Cortex Analyst & Semantic Views"), icon=":material/chat:"),
+            st.Page("app_pages/session_03.py", title=_title(3, "Cortex Search"), icon=":material/search:"),
+            st.Page("app_pages/session_04.py", title=_title(4, "Cortex Analyst & Semantic Views"), icon=":material/chat:"),
         ],
         "Block 2: Agents & Apps": [
-            st.Page("app_pages/session_04.py", title=_title(4, "Cortex Agents"), icon=":material/smart_toy:"),
-            st.Page("app_pages/session_05.py", title=_title(5, "CoWork"), icon=":material/group:"),
-            st.Page("app_pages/session_06.py", title=_title(6, "Streamlit"), icon=":material/web:"),
+            st.Page("app_pages/session_05.py", title=_title(5, "Cortex Agents"), icon=":material/smart_toy:"),
+            st.Page("app_pages/session_06.py", title=_title(6, "CoWork"), icon=":material/group:"),
+            st.Page("app_pages/session_07.py", title=_title(7, "Streamlit"), icon=":material/web:"),
         ],
     },
     position="sidebar",

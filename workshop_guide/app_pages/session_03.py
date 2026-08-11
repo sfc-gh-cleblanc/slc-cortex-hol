@@ -1,198 +1,217 @@
 import streamlit as st
-from components import render_session_header, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
+from components import render_session_header, render_prompt, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
 
-render_session_header(3, "Cortex Analyst & Semantic Views", "35 min", "Semantic view created via Autopilot, tested with natural language queries")
+render_session_header(3, "Cortex Search", "30 min", "Search service over investment documents, tested with semantic queries")
 
 render_technologies_used([
-    {"name": "Semantic View Autopilot", "description": "A UI-guided tool in Snowsight that automatically generates a semantic view from your tables — detecting relationships, creating dimensions, facts, metrics, and synonyms.", "icon": "auto_awesome"},
-    {"name": "Cortex Analyst", "description": "Snowflake's text-to-SQL engine that converts natural language questions into SQL queries. Uses a semantic view to understand your data's business meaning, relationships, and metrics.", "icon": "chat"},
-    {"name": "Semantic View", "description": "A first-class Snowflake object that describes your data in business terms: tables, relationships, facts, dimensions, metrics, and synonyms. The bridge between natural language and SQL.", "icon": "description"},
+    {"name": "Cortex Search Service", "description": "A Snowflake-native semantic search service. Builds an embedding index over a text column and enables natural language retrieval with optional attribute-based filtering. Results are ranked by relevance, not keywords.", "icon": "search"},
+    {"name": "DOCUMENT_CHUNKS table", "description": "The source table for the search service, created in Session 2. Contains parsed PDF text split into ~500-token chunks with document_type and security_ticker metadata for filtering.", "icon": "table_chart"},
+    {"name": "Hybrid Search", "description": "Cortex Search combines dense vector embeddings (semantic similarity) with sparse BM25 (keyword matching) to produce high-quality results for both concept-level and specific-term queries.", "icon": "auto_awesome"},
 ])
 
 st.markdown("---")
 
-st.markdown("#### :material/auto_awesome: Create a Semantic View with Autopilot")
-
+st.markdown("#### :material/search: Create the Cortex Search Service")
 st.markdown("""
-In this session, you'll use the **Semantic View Autopilot** to create a semantic view over your claims data — no SQL required. The Autopilot analyzes your tables and generates a complete semantic view with relationships, metrics, and dimensions.
+In this session, you'll create a Cortex Search service over the `DOCUMENT_CHUNKS` table built in Session 2.
+The service embeds and indexes the `chunk_text` column, enabling semantic search across all 15 investment documents.
+""")
+
+PROMPT_3_1 = """In SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS, create a Cortex Search service over the DOCUMENT_CHUNKS table.
+
+The search service should:
+1. Index the chunk_text column as the searchable content
+2. Include document_type and security_ticker as filterable attributes (ATTRIBUTES clause)
+3. Also include document_name and chunk_index as attributes for display
+4. Use CAPITAL_WH for indexing compute
+5. Set TARGET_LAG to '1 day'
+6. Name the service INVESTMENT_DOCS_SEARCH
+
+Create the service and then check its status to confirm indexing has started.
+
+Use SHOW CORTEX SEARCH SERVICES to verify it was created."""
+
+render_prompt("Prompt 3.1", "Create the Cortex Search Service", PROMPT_3_1)
+
+render_explanation("What this prompt does", """
+Creates a Cortex Search service and begins building the embedding index:
+
+```sql
+CREATE OR REPLACE CORTEX SEARCH SERVICE INVESTMENT_DOCS_SEARCH
+  ON chunk_text
+  ATTRIBUTES document_type, security_ticker, document_name, chunk_index
+  TARGET_LAG = '1 day'
+  WAREHOUSE = CAPITAL_WH
+  AS (
+    SELECT chunk_id, chunk_text, document_type, security_ticker, document_name, chunk_index
+    FROM SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.DOCUMENT_CHUNKS
+  );
+
+-- Check status
+SHOW CORTEX SEARCH SERVICES IN SCHEMA SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS;
+```
+
+**How Cortex Search builds its index**:
+1. Cortex reads every row from the source query (our DOCUMENT_CHUNKS subquery)
+2. It generates dense vector embeddings for each `chunk_text` value using Snowflake's embedding model
+3. It builds a hybrid index combining those embeddings (semantic search) with BM25 inverted index (keyword search)
+4. ATTRIBUTES columns are indexed separately as metadata — no embedding needed for filter-only columns
+
+**TARGET_LAG** defines how fresh the index is. A 1-day lag means new chunks added to DOCUMENT_CHUNKS will be searchable within 24 hours. For real-time search, set `TARGET_LAG = '1 minute'` (incurs more compute cost).
 """)
 
 st.write("")
-
-st.markdown("##### Step 1: Open the Semantic View Autopilot")
+st.markdown("##### :material/check: Confirm the index is ready")
 with st.container(border=True):
     st.markdown("""
-1. In Snowsight, navigate to **AI & ML** in the left sidebar
-2. Click **Cortex Analyst**
-3. Click the **Create with Autopilot** button in the top right
-""")
+After creating the service, check its status:
 
-st.write("")
+1. In Snowsight, navigate to **AI & ML > Cortex Search**
+2. Find `INVESTMENT_DOCS_SEARCH` — you should see it listed with its indexing status
+3. Wait until the status shows **Ready** before running the search tests below
 
-st.markdown("##### Step 2: Provide context")
-with st.container(border=True):
-    st.markdown("""
-While providing context is optional, it's extremely useful in creating a high-quality semantic view. Without it, the model only uses the database schema information, which might lack business nuance. The Autopilot supports several options for providing context: Tableau workbooks, Power BI reports, existing SQL queries, and others.
-
-For this workshop, we'll skip this step since our table and column names are descriptive enough for the Autopilot to work with.
-
-1. Click **Skip** to proceed to the next step
-""")
-
-st.write("")
-
-st.markdown("##### Step 3: Name your semantic view")
-with st.container(border=True):
-    st.markdown("""
-1. Enter the name: `CLAIMS_ANALYTICS_VIEW`
-2. Set the database to **DENTAL_CLAIMS_AI**
-3. Set the schema to **CLAIMS_ANALYTICS**
-4. Click **Next**
-""")
-
-st.write("")
-
-st.markdown("##### Step 4: Select tables")
-with st.container(border=True):
-    st.markdown("""
-1. Select these tables:
-   - `MEMBERS`
-   - `CLAIMS`
-   - `PROVIDERS`
-   - `DENTAL_PROCEDURES`
-   - `EXTRACTED_CLAIM_INSIGHTS` (from Session 2)
-2. Click **Next**
-""")
-
-st.write("")
-
-st.markdown("##### Step 5: Select columns")
-with st.container(border=True):
-    st.markdown("""
-1. Click **Select all** to include all columns from all selected tables
-2. Click **Create** to complete the wizard
-
-The Autopilot will analyze your tables and generate a semantic view with auto-detected relationships, dimensions, facts, metrics, and synonyms. This may take a moment.
-""")
-
-st.write("")
-
-st.markdown("##### Step 6: Confirm relationships")
-with st.container(border=True):
-    st.markdown("""
-When the Autopilot completes its analysis, it will make several suggestions. Scroll down to the **Relationships** section. There will be 4 relationships detected — these define the table joins that Cortex Analyst will use when generating SQL.
-
-For each relationship:
-1. Click the relationship
-2. Click **Review**
-3. Click **Add** to include it within the semantic view
-
-Repeat for all 4 relationships to ensure Cortex Analyst can join across your tables correctly.
-""")
-
-st.write("")
-
-st.markdown("##### Step 7: Add a verified query")
-with st.container(border=True):
-    st.markdown("""
-**Verified queries** are pre-validated question-and-SQL pairs that guarantee Cortex Analyst returns the correct result for specific questions. They are one of the most important tools for improving accuracy in production.
-
-**Why verified queries matter:**
-- They act as "ground truth" — when a user asks a question that matches a verified query, Analyst returns the exact SQL you specified rather than generating its own
-- They handle edge cases, business-specific logic, and complex joins that the model might get wrong
-- They build trust with end users by ensuring critical questions always produce correct answers
-- Over time, they also help the model learn patterns for similar (non-verified) questions
-
-**How Cortex suggests verified queries:**
-In production accounts, Cortex will analyze your query history and suggest verified queries based on frequently asked questions. Since we're working in a trial account with limited history, we'll add one manually.
-
-**To add a verified query:**
-1. In the suggestions box, click the **Add a verified query** button
-2. Enter a question: `What are the total claims processed, the approval rate, average payout amount and total dollars paid?`
-3. Click **Generate SQL** to view the generated SQL
-4. Click **Run** to execute the query and confirm expected results
-5. Click **Save and continue** to add this as a verified query
-""")
-
-st.write("")
-
-st.markdown("##### Step 8: Add a view description")
-with st.container(border=True):
-    st.markdown("""
-A well-written description helps both AI agents and human users understand when to use this semantic view. When a Cortex Agent has multiple tools available, it uses the view description to decide whether this is the right tool for a given question.
-
-1. Click the **Edit** button (pencil icon) to the right of the view name at the top
-2. In the description field, paste the following description:
-""")
-    st.code("Dental claims analytics for DentaQuest covering member enrollment, claim submissions, provider performance, procedure costs, and adjudication outcomes. Use this view for questions about claim volumes, approval/denial rates, billed and paid amounts, processing times, provider network analysis, member demographics, procedure utilization, and AI-extracted clinical insights from adjuster notes.", language="text", wrap_lines=True)
-    st.markdown("""
-3. Click **Apply** to accept this update
-
-This description will be visible to Cortex Agents when they evaluate which tool to use for a given question — the more specific and comprehensive it is, the better the agent's tool routing will be.
-""")
-
-st.write("")
-
-st.markdown("##### Step 9: Save the semantic view")
-with st.container(border=True):
-    st.markdown("""
-Click **Save** to accept all the changes you've made — relationships, verified query, and description. Your semantic view is now ready for use with Cortex Analyst and Cortex Agents.
+Indexing 15 documents with a few hundred chunks typically takes 1-3 minutes.
 """)
 
 st.markdown("---")
 
-st.markdown("#### :material/chat: Test with Natural Language Queries")
+st.markdown("#### :material/query_stats: Test with SQL Search Queries")
 
-st.markdown("""
-Click the **Playground** tab on the right side of the semantic view editor. This opens an interactive chat where you can test natural language questions against your view.
+PROMPT_3_2 = """In SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS, test the INVESTMENT_DOCS_SEARCH Cortex Search service with three queries.
 
-Enter each question below one at a time and click **Run** to see the generated SQL and results:
+Use SNOWFLAKE.CORTEX.SEARCH_PREVIEW to run each query:
+
+Query 1 - General research search:
+Ask: "What is the analyst outlook for Canadian bank stocks?" 
+Return columns: chunk_text, document_name, document_type
+Limit: 5 results
+
+Query 2 - Filter by document type:
+Ask: "infrastructure investment thesis and rising rate impact"
+Filter to document_type = 'Investment Memo' only
+Return: chunk_text, document_name
+Limit: 3 results
+
+Query 3 - Security-specific search:
+Ask: "NVIDIA artificial intelligence revenue growth data center"
+Filter to document_type = 'Research Report'
+Return: chunk_text, document_name, security_ticker
+Limit: 3 results
+
+Parse and display the results from each query. Show the chunk_text content so we can verify relevance.
+
+Execute all SQL."""
+
+render_prompt("Prompt 3.2", "Test Cortex Search Queries", PROMPT_3_2)
+
+render_explanation("What this prompt does", """
+Uses the SEARCH_PREVIEW function to query the Cortex Search service directly from SQL:
+
+```sql
+-- Query 1: General semantic search
+SELECT PARSE_JSON(
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.INVESTMENT_DOCS_SEARCH',
+        '{
+            "query": "What is the analyst outlook for Canadian bank stocks?",
+            "columns": ["chunk_text", "document_name", "document_type"],
+            "limit": 5
+        }'
+    )
+)['results'] AS search_results;
+
+-- Query 2: Filter by document type
+SELECT PARSE_JSON(
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.INVESTMENT_DOCS_SEARCH',
+        '{
+            "query": "infrastructure investment thesis rising rate impact",
+            "columns": ["chunk_text", "document_name"],
+            "filter": {"@eq": {"document_type": "Investment Memo"}},
+            "limit": 3
+        }'
+    )
+)['results'] AS filtered_results;
+
+-- Query 3: Security-specific with type filter
+SELECT PARSE_JSON(
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.INVESTMENT_DOCS_SEARCH',
+        '{
+            "query": "NVIDIA artificial intelligence revenue growth data center",
+            "columns": ["chunk_text", "document_name", "security_ticker"],
+            "filter": {"@eq": {"document_type": "Research Report"}},
+            "limit": 3
+        }'
+    )
+)['results'] AS nvda_results;
+```
+
+**Filter syntax**: The `filter` field accepts a JSON expression:
+- `{"@eq": {"field": "value"}}` — exact match
+- `{"@in": {"field": ["v1", "v2"]}}` — match any of the values
+- `{"@and": [...]}` / `{"@or": [...]}` — compound filters
+
+**Semantic vs. keyword search**: The query `"NVIDIA AI revenue"` will return relevant chunks even if those exact words aren't present — it matches on *meaning*, not just string overlap. This is what makes Cortex Search powerful for investment research where the same concept may be described in many ways.
 """)
 
-questions = [
-    ("1. Procedure costs", "What are the top 5 procedures by total billed amount?"),
-    ("2. Denial rates", "Which providers have the highest claim denial rate?"),
-    ("3. Volume trends", "Show me monthly claim volume trends by plan type for 2025"),
-    ("4. Processing time", "What is the average time from date of service to adjudication for approved vs denied claims?"),
-    ("5. Network analysis", "What is the average paid amount for in-network vs out-of-network providers?"),
-]
+st.write("")
 
-for title, question in questions:
-    with st.container(border=True):
-        st.markdown(f"**{title}**")
-        st.code(question, language="text", wrap_lines=True)
+st.markdown("##### :material/lightbulb: Explore the Search UI")
+with st.container(border=True):
+    st.markdown("""
+After running the SQL tests, try the interactive search UI:
+
+1. In Snowsight, navigate to **AI & ML > Cortex Search**
+2. Click on `INVESTMENT_DOCS_SEARCH`
+3. Click **Preview** to open the interactive search interface
+4. Try these questions:
+""")
+    questions = [
+        "What risks are associated with our fixed income portfolio?",
+        "What are the ESG screening criteria updates?",
+        "Which companies have been upgraded by analysts recently?",
+        "What are the compliance requirements for personal trading?",
+        "How is the Bank of Canada rate cycle affecting our portfolio positioning?",
+    ]
+    for q in questions:
+        st.code(q, language="text", wrap_lines=True)
+    st.markdown("""
+Observe how Cortex Search returns the most relevant passages from across all 15 documents — regardless of which specific document contains the answer.
+""")
 
 st.info("""
-:material/lightbulb: **Tip:** If any of these test questions produce particularly useful results, you can save them as additional verified queries directly from the Playground by clicking the save option on the result.
+:material/smart_toy: **Coming up in Session 5**: The `INVESTMENT_DOCS_SEARCH` service you created here will be added as a tool on the Portfolio Analyst Agent. This enables the agent to answer both structured data questions (via the semantic view) and document research questions (via Cortex Search) in a single conversational interface.
 """)
 
-render_explanation("What these queries test", """
-Each query exercises different capabilities of the semantic view:
+st.markdown("---")
 
-1. **"Top 5 procedures by billed amount"** — Tests joining CLAIMS to DENTAL_PROCEDURES and aggregating billed_amount with a GROUP BY and ORDER BY.
+render_explanation("How Cortex Search works", """
+**Cortex Search** builds a hybrid retrieval index over a text column:
 
-2. **"Providers with highest denial rate"** — Tests a calculated metric (COUNT of denied / total COUNT) grouped by provider, requiring a JOIN to PROVIDERS.
+1. **Embedding generation**: Each chunk is passed through an embedding model that converts text into a dense vector representing its semantic meaning.
+2. **Hybrid index**: The dense vector index (approximate nearest-neighbor search) is combined with a sparse BM25 index (keyword matching) to handle both semantic and exact-term queries.
+3. **Query processing**: At search time, the query is embedded and both the semantic and keyword components are scored. Results are re-ranked by a fusion algorithm that combines both scores.
+4. **Attribute filtering**: ATTRIBUTES columns are indexed as metadata. Filters are applied before scoring, reducing the search space and improving performance and precision.
 
-3. **"Monthly claim volume by plan type"** — Tests time-series aggregation with DATE_TRUNC, GROUP BY on a dimension from MEMBERS (plan_type), and a JOIN between CLAIMS and MEMBERS.
-
-4. **"Avg time to adjudication"** — Tests DATEDIFF between date_of_service and adjudication_date, grouped by status dimension.
-
-5. **"Common procedures in Massachusetts"** — Tests filtering on a dimension (state) with a JOIN path through CLAIMS to MEMBERS.
-
-**What to observe**: Look at the generated SQL — does it correctly identify which tables to join, which metrics to use, and how to filter? This demonstrates the power of the semantic layer.
+**Cortex Search vs. full-text search**:
+- Full-text search: finds documents containing the exact query words
+- Cortex Search: finds documents with *similar meaning*, even if different words are used
+- Example: query "fixed income duration risk" will find chunks discussing "bond sensitivity to interest rate changes" even without exact word overlap
 """)
 
 
 render_key_concepts([
-    {"term": "Semantic View Autopilot", "definition": "A UI tool that automatically generates a semantic view by analyzing table structures, detecting foreign key relationships, inferring appropriate dimensions/facts/metrics, and adding synonyms. Significantly reduces the time to create a working semantic view."},
-    {"term": "Cortex Analyst", "definition": "Snowflake's text-to-SQL engine. Takes natural language questions and generates SQL queries using a semantic view for context. Supports aggregations, joins, filtering, time-series analysis, and diverse query types."},
-    {"term": "Fact vs Dimension vs Metric", "definition": "Facts are raw numeric columns (billed_amount). Dimensions are categorical/temporal columns for grouping and filtering (plan_type, state). Metrics are pre-defined aggregations over facts (SUM(billed_amount), AVG(paid_amount))."},
-    {"term": "Synonyms", "definition": "Alternative names for dimensions and facts that help Cortex Analyst understand user intent. For example, 'dentist' as a synonym for provider_name, or 'payout' for paid_amount."},
+    {"term": "Cortex Search Service", "definition": "A Snowflake-native search service created with CREATE CORTEX SEARCH SERVICE. It indexes a text column from a table or query, builds an embedding index, and enables semantic retrieval via SEARCH_PREVIEW or the REST API."},
+    {"term": "Embedding Index", "definition": "A searchable index of dense vector representations of text. Each chunk is represented as a high-dimensional vector. Similar meanings produce similar vectors, enabling semantic retrieval by nearest-neighbor search."},
+    {"term": "Hybrid Search", "definition": "A retrieval strategy that combines dense vector search (semantic similarity) with sparse BM25 (keyword frequency) scoring. Produces better results than either method alone, especially for mixed natural language and specific-term queries."},
+    {"term": "ATTRIBUTES clause", "definition": "Columns specified as ATTRIBUTES in a Cortex Search service are indexed as metadata, not as embedding inputs. They can be used as filter conditions in search queries without contributing to semantic matching."},
+    {"term": "TARGET_LAG", "definition": "How frequently Cortex Search refreshes its index from the source table. Set to '1 day' for batch use cases, '1 minute' for near-real-time search. Lower lag = more compute cost."},
 ])
 
 render_what_you_built([
-    "CLAIMS_ANALYTICS_VIEW semantic view (via Autopilot)",
-    "Auto-detected relationships between 5 tables",
-    "Natural language queries tested across multiple patterns",
-    "Validated text-to-SQL accuracy for claims analytics",
+    "INVESTMENT_DOCS_SEARCH — Cortex Search service over 15 investment PDFs",
+    "Semantic search tested across multiple query patterns",
+    "Document-type filtering with @eq filter syntax demonstrated",
+    "Search service ready to be added as an agent tool in Session 5",
 ])

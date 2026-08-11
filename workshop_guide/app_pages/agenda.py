@@ -6,11 +6,12 @@ AGENDA = [
     ("Introductions & Overview", "15 min", None),
     ("Session 1: Data Prep", "30 min", "1"),
     ("Session 2: AI SQL", "40 min", "2"),
-    ("Session 3: Cortex Analyst & Semantic Views", "35 min", "3"),
+    ("Session 3: Cortex Search", "30 min", "3"),
+    ("Session 4: Cortex Analyst & Semantic Views", "35 min", "4"),
     (":orange-badge[BREAK]", "15 min", None),
-    ("Session 4: Cortex Agents", "30 min", "4"),
-    ("Session 5: CoWork", "25 min", "5"),
-    ("Session 6: Streamlit", "30 min", "6"),
+    ("Session 5: Cortex Agents", "30 min", "5"),
+    ("Session 6: CoWork", "25 min", "6"),
+    ("Session 7: Streamlit", "30 min", "7"),
     ("Summary & Next Steps", "15 min", None),
 ]
 
@@ -34,11 +35,12 @@ st.markdown("##### What you'll build")
 st.markdown("""
 | Object Type | Count | Examples |
 |-------------|-------|---------|
-| **Tables** | 6 | Members, claims, providers, procedures, claim notes, communications |
-| **AI Extractions** | 1 | EXTRACTED_CLAIM_INSIGHTS materialized table |
-| **Semantic Views** | 1 | Claims analytics semantic view (via Autopilot) |
-| **Cortex Agents** | 1 | Claims analysis agent with semantic view tool |
-| **Streamlit Apps** | 1 | Claims dashboard with KPIs and charts |
+| **Tables** | 7 | Clients, positions, securities, asset classes, analyst notes, communications, document chunks |
+| **AI Extractions** | 1 | EXTRACTED_INVESTMENT_INSIGHTS materialized table |
+| **Cortex Search Service** | 1 | INVESTMENT_DOCS_SEARCH over 15 parsed investment PDFs |
+| **Semantic Views** | 1 | Portfolio analytics semantic view (via Autopilot) |
+| **Cortex Agents** | 1 | Portfolio analyst agent with semantic view + search tools |
+| **Streamlit Apps** | 1 | Portfolio dashboard with KPIs and charts |
 """)
 
 st.write("")
@@ -46,7 +48,8 @@ st.write("")
 st.markdown("##### Total duration")
 with st.container(border=True):
     st.markdown("""
-:material/schedule: **~4 hours** (including 15-minute break between Block 1 and Block 2)
+:material/schedule: **~4.5 hours**
+(including 15-minute break between Block 1 and Block 2)
 
-Dental Claims AI Workshop — July 20, 2026
+Sun Life Capital Management AI Workshop — TBD
 """)

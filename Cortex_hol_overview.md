@@ -1,8 +1,8 @@
-# Health Insurance Claims AI Workshop — Overview
+# Sun Life Capital Management AI Workshop — Overview
 
-**Audience:** Sun Life DentaQuest  
-**Date:** July 20, 2026  
-**Total Duration:** ~4 hours (including break)  
+**Audience:** Sun Life Capital  
+**Date:** TBD  
+**Total Duration:** ~4.5 hours (including break)  
 **Platform:** Snowflake (Trial Account)  
 **Trial Signup:** https://signup.snowflake.com/?t=0b12bc1bb793241db3f0dc38d8028580cb8f77a111f2359704a5e2707182aa1a
 
@@ -10,7 +10,7 @@
 
 ## Workshop Context
 
-This hands-on workshop walks participants through building a complete AI-powered claims intelligence platform on Snowflake. The scenario centers on dental insurance claims analysis — participants load claims data, extract insights from unstructured clinical notes using Cortex AI functions, build a natural language analytics layer with Semantic Views, create an AI agent for self-service Q&A, and deploy a Streamlit dashboard.
+This hands-on workshop walks participants through building a complete AI-powered portfolio analytics platform on Snowflake. The scenario centers on capital management — participants load portfolio data, extract insights from unstructured investment analyst notes and PDF documents using Cortex AI functions, build a searchable document intelligence layer with Cortex Search, create a natural language analytics layer with Semantic Views, deploy a multi-tool AI agent, and build a Streamlit dashboard.
 
 The workshop is delivered as a multi-page Streamlit guide application. Each session contains numbered prompts that participants copy into Cortex Code (Snowflake's AI coding assistant) or follow as UI-guided steps within Snowsight.
 
@@ -23,13 +23,14 @@ The workshop is delivered as a multi-page Streamlit guide application. Each sess
 | Introductions & Overview | 15 min |
 | 1. Data Prep | 30 min |
 | 2. AI SQL | 40 min |
-| 3. Cortex Analyst & Semantic Views | 35 min |
+| 3. Cortex Search | 30 min |
+| 4. Cortex Analyst & Semantic Views | 35 min |
 | **Break** | **15 min** |
-| 4. Cortex Agents | 30 min |
-| 5. CoWork | 25 min |
-| 6. Streamlit | 30 min |
+| 5. Cortex Agents | 30 min |
+| 6. CoWork | 25 min |
+| 7. Streamlit | 30 min |
 | Summary & Next Steps | 15 min |
-| **Total** | **~4 hrs** |
+| **Total** | **~4.5 hrs** |
 
 ---
 
@@ -39,44 +40,59 @@ The workshop is delivered as a multi-page Streamlit guide application. Each sess
 
 **Objective:** Establish the Snowflake environment and load all workshop data.
 
-Participants create a database (`DENTAL_CLAIMS_AI`), schema (`CLAIMS_ANALYTICS`), warehouse, and internal stage. They upload synthetic CSV files covering members, claims, providers, dental procedures, claim notes (free-text), and member communications. Tables are created using `INFER_SCHEMA` and populated via `COPY INTO`. The session ends with a verification query confirming all tables and row counts.
+Participants create a database (`SLC_PORTFOLIO_AI`), schema (`PORTFOLIO_ANALYTICS`), warehouse (`CAPITAL_WH`), and two internal stages (`DATA` for CSVs, `INVESTMENT_DOCS` for PDFs). They upload synthetic CSV files covering clients, positions, securities, asset classes, analyst notes, and client communications. Tables are created using `INFER_SCHEMA` and populated via `COPY INTO`. Investment document PDFs are uploaded to the `INVESTMENT_DOCS` stage. The session ends with verification queries confirming all tables, row counts, and document uploads.
 
-**Key outcome:** A fully populated Snowflake environment with 6+ tables of structured and unstructured dental claims data ready for analysis.
+**Key outcome:** A fully populated Snowflake environment with 6 tables of structured data and 15 investment PDF documents ready for AI processing.
 
 ---
 
 ### Session 2 — AI SQL (40 min)
 
-**Objective:** Use Cortex AI functions to extract structured insights from unstructured claim documents and text at scale.
+**Objective:** Use Cortex AI functions to extract structured insights from analyst notes and parse/chunk investment PDFs for Cortex Search.
 
-Following the pattern from Snowflake's "Batch Data Extraction at Scale with Cortex AI Functions" quickstart, participants:
+Participants:
 
-1. Upload sample claim documents (EOBs, appeals, clinical narratives) to an internal stage
-2. Use `AI_EXTRACT` with a `responseFormat` schema to pull structured fields from free-text claim notes (tooth number, procedure type, clinical finding, pre-authorization requirement, denial reason)
-3. Use `AI_CLASSIFY` to categorize claims into types (routine, emergency, cosmetic, orthodontic)
-4. Use `AI_EXTRACT` on staged documents (`.txt` files) via `TO_FILE()` to parse EOBs and appeals
-5. Build a batch extraction pipeline that materializes all extracted fields into an `EXTRACTED_CLAIM_INSIGHTS` table
+1. Use `AI_EXTRACT` with a `responseFormat` schema to pull structured fields from free-text analyst notes (ticker, recommendation, price target, key risk, investment horizon)
+2. Use `AI_CLASSIFY` to categorize analyst notes into event types (Earnings Update, Risk Flag, Price Target Revision, etc.)
+3. Use `AI_EXTRACT` on staged PDF documents via `TO_FILE()` to extract document-level metadata
+4. Build a batch extraction pipeline materializing results into `EXTRACTED_INVESTMENT_INSIGHTS`
+5. Use `AI_PARSE_DOCUMENT` to extract full text from all 15 investment PDFs
+6. Use `SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER` to chunk documents into ~500-token segments
+7. Create the `DOCUMENT_CHUNKS` table as the source for Cortex Search
 
-**Key outcome:** Unstructured clinical text transformed into queryable structured data using Cortex AI functions, demonstrating the AI_EXTRACT, AI_CLASSIFY, and batch processing patterns.
+**Key outcome:** Analyst notes transformed into structured data, and all 15 investment PDFs parsed, classified, and chunked into a searchable `DOCUMENT_CHUNKS` table.
 
 ---
 
-### Session 3 — Cortex Analyst & Semantic Views (35 min)
+### Session 3 — Cortex Search (30 min)
 
-**Objective:** Create a semantic layer over claims data and query it with natural language.
+**Objective:** Create a Cortex Search service over the investment document chunks and test semantic retrieval.
+
+Participants:
+
+1. Create `INVESTMENT_DOCS_SEARCH` — a Cortex Search service indexing `chunk_text` with `document_type` and `security_ticker` as filterable attributes
+2. Test the search service using `SNOWFLAKE.CORTEX.SEARCH_PREVIEW` with natural language queries
+3. Test attribute-based filtering (filter by document_type = 'Investment Memo')
+4. Explore the interactive search UI in Snowsight
+
+**Key outcome:** A deployed Cortex Search service that enables semantic retrieval across 15 investment documents, ready to be used as an agent tool.
+
+---
+
+### Session 4 — Cortex Analyst & Semantic Views (35 min)
+
+**Objective:** Create a semantic layer over portfolio data and query it with natural language.
 
 This session is UI-guided. Participants use the **Semantic View Autopilot** in Snowsight to:
 
-1. Navigate to the Autopilot and select tables from `DENTAL_CLAIMS_AI.CLAIMS_ANALYTICS`
-2. Let the Autopilot generate a semantic view with auto-detected relationships, dimensions, facts, metrics, and synonyms
-3. Review and accept the generated view
-4. Test the semantic view with natural language questions in the Cortex Analyst playground:
-   - "What are the top 5 procedures by total billed amount?"
-   - "Which providers have the highest denial rate?"
-   - "Show me monthly claim volume trends by plan type"
-   - "What is the average time from service date to adjudication?"
+1. Select tables from `SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS`: CLIENTS, POSITIONS, SECURITIES, ASSET_CLASSES, EXTRACTED_INVESTMENT_INSIGHTS
+2. Let the Autopilot generate `PORTFOLIO_ANALYTICS_VIEW` with auto-detected relationships, dimensions, facts, metrics, and synonyms
+3. Review and accept relationships (POSITIONS → CLIENTS, POSITIONS → SECURITIES, SECURITIES → ASSET_CLASSES, INSIGHTS → SECURITIES)
+4. Add a verified query for total AUM and allocation breakdown
+5. Add a view description for agent tool routing
+6. Test with natural language questions (top securities by value, allocation by asset class, analyst recommendation distribution, etc.)
 
-**Key outcome:** A working semantic view that enables natural language queries over dental claims data, created entirely through the Autopilot UI without writing SQL.
+**Key outcome:** A working semantic view that enables natural language queries over portfolio data, created through the Autopilot UI.
 
 ---
 
@@ -86,48 +102,50 @@ This session is UI-guided. Participants use the **Semantic View Autopilot** in S
 
 ## Block 2: Agents & Apps
 
-### Session 4 — Cortex Agents (30 min)
+### Session 5 — Cortex Agents (30 min)
 
-**Objective:** Create an AI agent that provides self-service claims analytics through a conversational interface.
+**Objective:** Create a multi-tool AI agent combining structured portfolio analytics with investment document search.
 
 Participants create a Cortex Agent using the Snowsight UI:
 
-1. Navigate to AI & ML > Cortex Agents > Create Agent
-2. Add the semantic view from Session 3 as a tool
-3. Write agent instructions defining its role as a dental claims analysis assistant for DentaQuest — helping analysts understand claim patterns, provider performance, member utilization, and potential fraud/waste indicators
-4. Add sample questions that demonstrate the agent's capabilities
-5. Test the agent with various query types (aggregations, comparisons, trend analysis)
+1. Create `PORTFOLIO_ANALYST_AGENT` in `SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS`
+2. Write orchestration instructions for the capital management domain
+3. Add `PORTFOLIO_ANALYTICS_VIEW` as the **Portfolio Data** tool (semantic view)
+4. Add `INVESTMENT_DOCS_SEARCH` as the **Investment Research** tool (Cortex Search) — this is the key differentiator from a single-tool agent
+5. Add sample questions demonstrating both data and document queries
+6. Test cross-tool queries that require both structured data and research document context
+7. Add to CoWork for collaborative use in Session 6
 
-**Key outcome:** A deployed Cortex Agent that analysts can interact with conversationally to get claims insights, powered by the semantic view.
-
----
-
-### Session 5 — CoWork (25 min)
-
-**Objective:** Use the agent in CoWork for collaborative claims analysis and insight generation.
-
-Participants open CoWork in Snowsight and interact with their agent for collaborative data exploration:
-- "Show me an overview of our claims portfolio — total claims, approval rate, average payout"
-- "Which providers are outliers in terms of billing amounts for common procedures?"
-- "Are there patterns in denied claims by procedure type or provider?"
-- "Compare approval rates across plan types — are some plans seeing more denials?"
-- "Generate a summary of our dental claims operations health"
-
-**Key outcome:** Hands-on experience with CoWork as a collaborative analysis tool, demonstrating how the Cortex Agent integrates into team workflows for self-service analytics.
+**Key outcome:** A deployed Cortex Agent with two tools — structured analytics and document search — capable of answering both quantitative portfolio questions and qualitative research questions in a unified interface.
 
 ---
 
-### Session 6 — Streamlit (30 min)
+### Session 6 — CoWork (25 min)
 
-**Objective:** Build and deploy a Streamlit dashboard with KPIs and AI-powered insights.
+**Objective:** Use the multi-tool agent in CoWork for collaborative portfolio analysis.
 
-Participants use Cortex Code to create a Streamlit in Snowflake app (`CLAIMS_DASHBOARD`) with:
-- KPI cards: Total Claims, Approval Rate, Avg Days to Adjudicate, Total Paid Amount
-- Charts: Claims by status (pie), Monthly claim volume (line), Top procedures by cost (bar)
-- An AI-powered insights section demonstrating AI_CLASSIFY or AI_EXTRACT inline
+Participants open CoWork and interact with PORTFOLIO_ANALYST_AGENT:
+- "Show me a summary of our assets under management by account type"
+- "Which securities represent concentration risk at the client level?"
+- "Search our research documents for the infrastructure investment thesis"
+- "Compare current asset class allocations to targets — where are we out of bounds?"
+- "Generate a board-ready executive summary combining portfolio metrics and recent research highlights"
+
+**Key outcome:** Hands-on experience with CoWork as a collaborative analysis tool, demonstrating how the dual-tool agent integrates structured data and document research into team workflows.
+
+---
+
+### Session 7 — Streamlit (30 min)
+
+**Objective:** Build and deploy a Streamlit portfolio dashboard with KPIs and AI-powered insights.
+
+Participants use Cortex Code to create a Streamlit in Snowflake app (`PORTFOLIO_DASHBOARD`) with:
+- KPI cards: Total AUM, Active Clients, Average Portfolio Value, Total Unrealized Gain/Loss
+- Charts: Asset allocation by class (pie), Top 10 securities by value (bar), Portfolio value by account type (horizontal bar)
+- An AI Insights section demonstrating AI_CLASSIFY on recent analyst notes inline
 - Deploy on container runtime with a compute pool
 
-**Key outcome:** A deployed Streamlit dashboard presenting key claims KPIs and charts, demonstrating Streamlit in Snowflake on container runtime.
+**Key outcome:** A deployed Streamlit dashboard presenting key portfolio KPIs and charts, demonstrating Streamlit in Snowflake on container runtime.
 
 ---
 
@@ -137,11 +155,14 @@ Participants use Cortex Code to create a Streamlit in Snowflake app (`CLAIMS_DAS
 |-----------|---------|
 | Database, Schema, Warehouse, Stage | 1 |
 | INFER_SCHEMA, COPY INTO | 1 |
-| AI_EXTRACT, AI_CLASSIFY | 2 |
-| TO_FILE(), Batch Processing | 2 |
-| Semantic View Autopilot | 3 |
-| Cortex Analyst | 3 |
-| Cortex Agents (UI) | 4 |
-| CoWork | 5 |
-| Streamlit in Snowflake (Container Runtime) | 6 |
-| Compute Pools | 6 |
+| AI_EXTRACT, AI_CLASSIFY, AI_COMPLETE | 2 |
+| AI_PARSE_DOCUMENT, TO_FILE() | 2 |
+| SPLIT_TEXT_RECURSIVE_CHARACTER, Chunking | 2 |
+| Cortex Search Service | 3 |
+| SEARCH_PREVIEW, Attribute Filtering | 3 |
+| Semantic View Autopilot | 4 |
+| Cortex Analyst | 4 |
+| Cortex Agents (dual tool — semantic view + search) | 5 |
+| CoWork | 6 |
+| Streamlit in Snowflake (Container Runtime) | 7 |
+| Compute Pools | 7 |

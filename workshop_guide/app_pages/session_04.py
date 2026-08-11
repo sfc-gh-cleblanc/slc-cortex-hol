@@ -1,203 +1,208 @@
 import streamlit as st
 from components import render_session_header, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
 
-render_session_header(4, "Cortex Agents", "30 min", "Cortex Agent created via UI with semantic view tool")
+render_session_header(4, "Cortex Analyst & Semantic Views", "35 min", "Semantic view created via Autopilot, tested with natural language queries")
 
 render_technologies_used([
-    {"name": "Cortex Agent", "description": "An orchestrating AI that plans tasks, selects tools, executes them, reflects on results, and generates responses. Created as a first-class Snowflake object via the Snowsight UI.", "icon": "smart_toy"},
-    {"name": "Tool Integration", "description": "The Agent uses tools like Cortex Analyst (semantic views) to answer questions. It automatically routes questions to the appropriate tool based on the query.", "icon": "route"},
-    {"name": "Agent Instructions", "description": "Custom instructions that define the agent's role, behavior, domain expertise, and response style. Shapes how the agent interprets and answers questions.", "icon": "edit_note"},
+    {"name": "Semantic View Autopilot", "description": "A UI-guided tool in Snowsight that automatically generates a semantic view from your tables — detecting relationships, creating dimensions, facts, metrics, and synonyms.", "icon": "auto_awesome"},
+    {"name": "Cortex Analyst", "description": "Snowflake's text-to-SQL engine that converts natural language questions into SQL queries. Uses a semantic view to understand your data's business meaning, relationships, and metrics.", "icon": "chat"},
+    {"name": "Semantic View", "description": "A first-class Snowflake object that describes your data in business terms: tables, relationships, facts, dimensions, metrics, and synonyms. The bridge between natural language and SQL.", "icon": "description"},
 ])
 
 st.markdown("---")
 
-st.markdown("#### :material/smart_toy: Create a Cortex Agent")
+st.markdown("#### :material/auto_awesome: Create a Semantic View with Autopilot")
 
 st.markdown("""
-In this session, you'll create a Cortex Agent using the Snowsight UI. The agent will use your semantic view from Session 3 as a tool, enabling conversational claims analytics.
+In this session, you'll use the **Semantic View Autopilot** to create a semantic view over your portfolio data — no SQL required.
+The Autopilot analyzes your tables and generates a complete semantic view with relationships, metrics, and dimensions.
 """)
 
 st.write("")
 
-st.markdown("##### Step 1: Open the Agent Builder")
+st.markdown("##### Step 1: Open the Semantic View Autopilot")
 with st.container(border=True):
     st.markdown("""
 1. In Snowsight, navigate to **AI & ML** in the left sidebar
-2. Click **Cortex Agents**
-3. Click **Create Agent** (or the **+** button)
+2. Click **Cortex Analyst**
+3. Click the **Create with Autopilot** button in the top right
 """)
 
 st.write("")
 
-st.markdown("##### Step 2: Configure the agent")
+st.markdown("##### Step 2: Provide context")
 with st.container(border=True):
     st.markdown("""
-1. Set the database to **DENTAL_CLAIMS_AI** and schema to **CLAIMS_ANALYTICS**
-2. Enter the object name: `CLAIMS_ANALYST_AGENT`
-3. Enter the display name: `Claims Analyst Agent`
-4. Click **Create agent**
+While providing context is optional, it's extremely useful in creating a high-quality semantic view.
+Without it, the model only uses the database schema information, which might lack business nuance.
+The Autopilot supports several options for providing context: Tableau workbooks, Power BI reports, existing SQL queries, and others.
+
+For this workshop, we'll skip this step since our table and column names are descriptive enough for the Autopilot to work with.
+
+1. Click **Skip** to proceed to the next step
 """)
 
 st.write("")
 
-st.markdown("##### Step 3: Write agent instructions")
+st.markdown("##### Step 3: Name your semantic view")
 with st.container(border=True):
     st.markdown("""
-1. Click the **Configuration** tab
-2. Click the **Instructions** sub-tab
-
-**Orchestration instructions** — paste the following into the orchestration instructions box:
+1. Enter the name: `PORTFOLIO_ANALYTICS_VIEW`
+2. Set the database to **SLC_PORTFOLIO_AI**
+3. Set the schema to **PORTFOLIO_ANALYTICS**
+4. Click **Next**
 """)
-    st.code("""You are a dental claims analysis assistant for DentaQuest. Your role is to help claims analysts, managers, and executives understand claim patterns, provider performance, member utilization, and identify potential areas of concern.
-
-When answering questions:
-- Use the semantic view tool for all data queries about claims, members, providers, and procedures
-- Provide specific numbers and percentages when available
-- Highlight any unusual patterns or outliers
-- When discussing financial data, format amounts as currency
-- If asked about trends, compare across time periods when data allows
-- Be concise but thorough — include context that helps with decision-making
-
-Domain context:
-- CDT codes (D0xxx-D9xxx) are the standard dental procedure coding system
-- Plan types include PPO, HMO, DHMO, and Indemnity
-- Network status affects reimbursement rates (In-Network vs Out-of-Network)
-- Key metrics: approval rate, average days to adjudicate, denial rate by reason
-- Common concerns: high-cost outlier providers, unusual procedure patterns, slow adjudication""", language="text", wrap_lines=True)
-    st.markdown("""
-**Response instructions** — paste the following into the response instructions box:
-""")
-    st.code("Always use charts and visualizations to show data whenever possible. Prefer bar charts for comparisons, line charts for trends over time, and tables for detailed breakdowns.", language="text", wrap_lines=True)
 
 st.write("")
 
-st.markdown("##### Step 4: Add the semantic view as a tool")
+st.markdown("##### Step 4: Select tables")
 with st.container(border=True):
     st.markdown("""
-1. Click the **Tools** sub-tab (still under Configuration)
-2. Next to **Query structured data**, click the **+ Add semantic view** button
-3. Select `CLAIMS_ANALYTICS_VIEW` (the semantic view created in Session 3)
-4. Give the tool a name (e.g., `Claims Data`)
-5. Click **Generate with Cortex** to create a detailed description for the tool — this helps the agent understand when to use it
-6. Click **Add**
+1. Select these tables:
+   - `CLIENTS`
+   - `POSITIONS`
+   - `SECURITIES`
+   - `ASSET_CLASSES`
+   - `EXTRACTED_INVESTMENT_INSIGHTS` (from Session 2)
+2. Click **Next**
 """)
+
+st.write("")
+
+st.markdown("##### Step 5: Select columns")
+with st.container(border=True):
+    st.markdown("""
+1. Click **Select all** to include all columns from all selected tables
+2. Click **Create** to complete the wizard
+
+The Autopilot will analyze your tables and generate a semantic view with auto-detected relationships, dimensions, facts, metrics, and synonyms. This may take a moment.
+""")
+
+st.write("")
+
+st.markdown("##### Step 6: Confirm relationships")
+with st.container(border=True):
+    st.markdown("""
+When the Autopilot completes its analysis, scroll down to the **Relationships** section. There will be several relationships detected — these define the table joins that Cortex Analyst will use when generating SQL.
+
+Expected relationships:
+- `POSITIONS.CLIENT_ID` → `CLIENTS.CLIENT_ID`
+- `POSITIONS.SECURITY_ID` → `SECURITIES.SECURITY_ID`
+- `SECURITIES.ASSET_CLASS` → `ASSET_CLASSES.NAME`
+- `EXTRACTED_INVESTMENT_INSIGHTS.SECURITY_ID` → `SECURITIES.SECURITY_ID`
+
+For each relationship:
+1. Click the relationship
+2. Click **Review**
+3. Click **Add** to include it within the semantic view
+
+Repeat for all detected relationships to ensure Cortex Analyst can join across your tables correctly.
+""")
+
+st.write("")
+
+st.markdown("##### Step 7: Add a verified query")
+with st.container(border=True):
+    st.markdown("""
+**Verified queries** are pre-validated question-and-SQL pairs that guarantee Cortex Analyst returns the correct result for specific questions. They are one of the most important tools for improving accuracy in production.
+
+**Why verified queries matter:**
+- They act as "ground truth" — when a user asks a question that matches a verified query, Analyst returns the exact SQL you specified rather than generating its own
+- They handle edge cases, business-specific logic, and complex joins that the model might get wrong
+- They build trust with end users by ensuring critical questions always produce correct answers
+
+**To add a verified query:**
+1. In the suggestions box, click the **Add a verified query** button
+2. Enter a question: `What is the total portfolio value under management, the number of active clients, and the average unrealized gain or loss per position?`
+3. Click **Generate SQL** to view the generated SQL
+4. Click **Run** to execute the query and confirm expected results
+5. Click **Save and continue** to add this as a verified query
+""")
+
+st.write("")
+
+st.markdown("##### Step 8: Add a view description")
+with st.container(border=True):
+    st.markdown("""
+A well-written description helps both AI agents and human users understand when to use this semantic view.
+When a Cortex Agent has multiple tools available, it uses the view description to decide whether this is the right tool for a given question.
+
+1. Click the **Edit** button (pencil icon) to the right of the view name at the top
+2. In the description field, paste the following description:
+""")
+    st.code("Portfolio analytics for Sun Life Capital covering client investment accounts, portfolio positions, security reference data, asset class allocations, and AI-extracted analyst insights. Use this view for questions about total assets under management, portfolio performance, unrealized gains and losses, asset class allocation drift, security exposure by sector, client risk profiles, position concentration, analyst recommendation trends, and account type breakdowns.", language="text", wrap_lines=True)
+    st.markdown("""
+3. Click **Apply** to accept this update
+
+This description will be visible to Cortex Agents when they evaluate which tool to use for a given question — the more specific and comprehensive it is, the better the agent's tool routing will be.
+""")
+
+st.write("")
+
+st.markdown("##### Step 9: Save the semantic view")
+with st.container(border=True):
+    st.markdown("""
+Click **Save** to accept all the changes you've made — relationships, verified query, and description.
+Your semantic view is now ready for use with Cortex Analyst and Cortex Agents.
+""")
+
+st.markdown("---")
+
+st.markdown("#### :material/chat: Test with Natural Language Queries")
 
 st.markdown("""
-**Other tools you can add to agents:**
+Click the **Playground** tab on the right side of the semantic view editor. This opens an interactive chat where you can test natural language questions against your view.
 
-| Tool type | Description |
-|-----------|-------------|
-| **Query structured data** | Semantic views — the agent generates SQL via Cortex Analyst to answer data questions |
-| **Search documents** | Cortex Search services — the agent retrieves relevant passages from unstructured document collections |
-| **Web search** | Enables the agent to search the internet for real-time information not in your Snowflake data |
-| **Custom tools** | SQL UDFs or stored procedures — extend the agent with custom business logic, calculations, or external API calls |
-
-For this workshop we'll use a single semantic view tool. In production, combining structured data + document search + custom tools creates powerful multi-capability agents.
+Enter each question below one at a time and click **Run** to see the generated SQL and results:
 """)
 
-st.write("")
+questions = [
+    ("1. Top positions", "What are the top 10 securities by total market value across all client portfolios?"),
+    ("2. Asset allocation", "Show me the breakdown of total portfolio value by asset class"),
+    ("3. Unrealized losses", "Which clients have the largest unrealized losses and what asset classes are driving it?"),
+    ("4. Analyst sentiment", "What is the distribution of analyst recommendations — how many Buy, Hold, and Sell ratings do we have?"),
+    ("5. Account type analysis", "Compare average portfolio value by account type — which account types have the highest average AUM?"),
+    ("6. Sector concentration", "Which sectors represent the largest share of total market value across all positions?"),
+]
 
-st.markdown("##### Step 5: Add sample questions")
-with st.container(border=True):
-    st.markdown("""
-1. Click the **General** sub-tab (under Configuration)
-2. Click **Add question** for each of the following sample questions:
-""")
-    st.code("What is our overall claim approval rate and how does it vary by plan type?", language="text", wrap_lines=True)
-    st.code("Which providers have the highest average billed amount per claim?", language="text", wrap_lines=True)
-    st.code("What are the most common denial reasons and their frequency?", language="text", wrap_lines=True)
-    st.code("Show me the monthly trend in claim volume for 2025", language="text", wrap_lines=True)
-    st.markdown("""
-These sample questions appear in the agent's chat interface to help users get started.
-""")
+for title, question in questions:
+    with st.container(border=True):
+        st.markdown(f"**{title}**")
+        st.code(question, language="text", wrap_lines=True)
 
-st.write("")
-
-st.markdown("##### Step 6: Save the agent")
-with st.container(border=True):
-    st.markdown("""
-Click the **Save** button to save all your configuration — instructions, tools, and sample questions. The agent must be saved before it can be tested.
+st.info("""
+:material/lightbulb: **Tip:** If any of these test questions produce particularly useful results, you can save them as additional verified queries directly from the Playground by clicking the save option on the result.
 """)
 
-st.write("")
+render_explanation("What these queries test", """
+Each query exercises different capabilities of the semantic view:
 
-st.markdown("##### Step 7: Test the agent")
-with st.container(border=True):
-    st.markdown("""
-1. Click the **Preview** tab to open the agent's chat interface
-2. Test your agent by entering these queries one at a time:
-""")
-    st.code("What is our total claims volume and approval rate?", language="text", wrap_lines=True)
-    st.code("Which providers are billing significantly above average for routine procedures?", language="text", wrap_lines=True)
-    st.code("How has our denial rate changed month over month?", language="text", wrap_lines=True)
-    st.code("Compare claim outcomes across plan types — which plans have the best approval rates?", language="text", wrap_lines=True)
-    st.code("What are the top 3 areas where we could reduce claim denials?", language="text", wrap_lines=True)
-    st.markdown("""
-Observe how the agent routes each question to the semantic view, generates SQL, and synthesizes a conversational response with charts.
-""")
+1. **"Top 10 securities by total market value"** — Tests GROUP BY on SECURITY_ID, joining to SECURITIES for names, aggregating MARKET_VALUE with ORDER BY DESC.
 
-st.write("")
+2. **"Breakdown by asset class"** — Tests joining POSITIONS to ASSET_CLASSES via SECURITIES.ASSET_CLASS, grouping and summing MARKET_VALUE.
 
-st.markdown("##### Step 8: Add to Snowflake CoWork")
-with st.container(border=True):
-    st.markdown("""
-Click the **+ Add to Snowflake CoWork** button to make this agent accessible within CoWork.
+3. **"Clients with largest unrealized losses"** — Tests filtering WHERE UNREALIZED_GAIN_LOSS < 0, joining to CLIENTS, GROUP BY client, ORDER BY.
 
-**Why this is required:** By default, a Cortex Agent is a Snowflake object that can be called via SQL or the REST API, but it is not automatically surfaced in CoWork. Adding it to CoWork registers the agent as an available assistant that users can interact with in the collaborative workspace — which is what we'll use in Session 5.
+4. **"Analyst recommendation distribution"** — Tests EXTRACTED_INVESTMENT_INSIGHTS.EXTRACTED_RECOMMENDATION, GROUP BY to produce a count/percentage breakdown.
 
-**Methods to access agents:**
+5. **"Average portfolio value by account type"** — Tests CLIENTS.ACCOUNT_TYPE dimension, AVG(PORTFOLIO_VALUE) metric.
 
-| Access method | Use case |
-|---------------|----------|
-| **CoWork** | Collaborative data exploration with team members (what we're enabling here) |
-| **REST API** | Embed the agent in external applications, chatbots, or custom UIs |
-| **SQL (CORTEX.AGENT)** | Call the agent programmatically from SQL queries, stored procedures, or notebooks |
-| **Streamlit apps** | Build custom chat interfaces powered by the agent (Session 6) |
-""")
+6. **"Sector concentration"** — Tests SECURITIES.SECTOR dimension, SUM(MARKET_VALUE) across POSITIONS, percentage of total.
 
-st.markdown("---")
-
-st.markdown("---")
-
-render_explanation("How the agent works", """
-**Cortex Agents** orchestrate multiple steps to answer questions:
-
-1. **Understanding**: The agent reads the user's question and determines intent
-2. **Planning**: It decides which tool(s) to use (in our case, the semantic view)
-3. **Execution**: It calls Cortex Analyst to generate and run SQL against the semantic view
-4. **Reflection**: It evaluates the results — are they sufficient? Need clarification?
-5. **Response**: It synthesizes a natural language answer from the query results
-
-**Agent vs. direct Cortex Analyst**:
-- Cortex Analyst generates SQL and returns rows
-- An Agent wraps Analyst with conversational context, instructions, and multi-turn memory
-
-**Extending agents**: In production, you could add more tools:
-- A **Cortex Search** service for searching unstructured documents
-- **Custom UDFs** for business calculations (fraud scoring, risk assessment)
-- **External APIs** via external access integrations
+**What to observe**: Look at the generated SQL — does it correctly identify which tables to join, which metrics to use, and how to filter? This demonstrates the power of the semantic layer.
 """)
 
 
 render_key_concepts([
-    {"term": "Cortex Agent", "definition": "A first-class Snowflake object that orchestrates LLMs and tools to answer complex questions. Supports planning, tool use, reflection, and multi-turn conversations. Created via UI or CREATE AGENT SQL."},
-    {"term": "Agent Instructions", "definition": "A system prompt that defines the agent's role, behavior, domain expertise, and response style. Good instructions lead to more accurate, contextual responses."},
-    {"term": "Tool Routing", "definition": "The agent's ability to select the appropriate tool for each question. With a semantic view tool, it routes data questions to Cortex Analyst for SQL generation."},
-    {"term": "Sample Questions", "definition": "Seed questions displayed to users in the agent UI. Help users understand what the agent can do and provide starting points for exploration."},
-])
-
-st.write("")
-
-st.markdown("##### :material/science: Advanced topics (not covered in this workshop)")
-
-render_key_concepts([
-    {"term": "Agent Evaluations", "definition": "A systematic process for measuring agent quality. Evaluations run a set of test questions against your agent and score the responses on metrics like correctness, relevance, and SQL accuracy. They help you quantify improvements when you change instructions, add tools, or modify the semantic view — turning agent development from guesswork into a data-driven iteration loop."},
-    {"term": "Agent Observability", "definition": "Monitoring and tracing how your agent performs in production. Observability tracks metrics like response latency, tool call frequency, error rates, and user satisfaction. It also provides trace-level visibility into each agent turn — which tools were called, what SQL was generated, and where failures occur. This helps identify issues before users report them and prioritize improvements based on real usage patterns."},
+    {"term": "Semantic View Autopilot", "definition": "A UI tool that automatically generates a semantic view by analyzing table structures, detecting foreign key relationships, inferring appropriate dimensions/facts/metrics, and adding synonyms. Significantly reduces the time to create a working semantic view."},
+    {"term": "Cortex Analyst", "definition": "Snowflake's text-to-SQL engine. Takes natural language questions and generates SQL queries using a semantic view for context. Supports aggregations, joins, filtering, time-series analysis, and diverse query types."},
+    {"term": "Fact vs Dimension vs Metric", "definition": "Facts are raw numeric columns (market_value, cost_basis). Dimensions are categorical/temporal columns for grouping and filtering (asset_class, account_type, province). Metrics are pre-defined aggregations (SUM(market_value), AVG(unrealized_gain_loss))."},
+    {"term": "Verified Queries", "definition": "Pre-validated question-SQL pairs stored in the semantic view. When a user asks a matching question, Cortex Analyst returns the verified SQL rather than generating new SQL. Ensures accuracy for critical business questions."},
 ])
 
 render_what_you_built([
-    "CLAIMS_ANALYST_AGENT — Cortex Agent with semantic view tool",
-    "Custom instructions for dental claims analysis domain",
-    "Tested analytics, trends, and cross-dimensional queries",
-    "Agent ready for CoWork integration (Session 5)",
+    "PORTFOLIO_ANALYTICS_VIEW semantic view (via Autopilot)",
+    "Auto-detected relationships between 5 tables",
+    "Natural language queries tested across multiple portfolio analytics patterns",
+    "Validated text-to-SQL accuracy for capital management analytics",
 ])
