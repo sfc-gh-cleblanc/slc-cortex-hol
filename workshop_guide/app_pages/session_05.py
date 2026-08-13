@@ -188,11 +188,18 @@ st.write("")
 st.markdown("##### Step 9: Add to Snowflake CoWork")
 with st.container(border=True):
     st.markdown("""
-> **Note — privilege required before this step.** Even as ACCOUNTADMIN, adding an agent to CoWork requires the `SNOWFLAKE.COWORK_ADMIN` database role. Run the following in a Cortex Code SQL cell first:
+> **Note — setup required before this step.** On a fresh trial account the Snowflake Intelligence object (which backs CoWork) does not exist yet. Run the following three statements in a Cortex Code SQL cell first:
 """)
-    st.code("""GRANT DATABASE ROLE SNOWFLAKE.COWORK_ADMIN TO ROLE ACCOUNTADMIN;""", language="sql")
+    st.code("""-- Step 1: Grant the privilege to create the CoWork object (run as ACCOUNTADMIN)
+GRANT CREATE SNOWFLAKE INTELLIGENCE ON ACCOUNT TO ROLE ACCOUNTADMIN;
+
+-- Step 2: Create the Snowflake CoWork object
+CREATE SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
+
+-- Step 3: Grant MODIFY so ACCOUNTADMIN can add/remove agents
+GRANT MODIFY ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE ACCOUNTADMIN;""", language="sql")
     st.markdown("""
-Once the grant is in place, return to the agent and click **+ Add to Snowflake CoWork**.
+Once all three statements succeed, return to the agent and click **+ Add to Snowflake CoWork**.
 
 **Why this is required:** By default, a Cortex Agent is a Snowflake object callable via SQL or REST API, but not automatically surfaced in CoWork. Adding it to CoWork registers the agent as an available assistant — which is what we'll use in Session 6.
 
