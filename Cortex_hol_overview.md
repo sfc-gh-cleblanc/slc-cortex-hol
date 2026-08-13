@@ -1,8 +1,8 @@
-# Sun Life Capital Management AI Workshop — Overview
+# Capital Management AI Workshop — Overview
 
-**Audience:** Sun Life Capital  
+**Audience:** Capital Management  
 **Date:** TBD  
-**Total Duration:** ~4.5 hours (including break)  
+**Total Duration:** ~4 hours (including break)  
 **Platform:** Snowflake (Trial Account)  
 **Trial Signup:** https://signup.snowflake.com/?t=0b12bc1bb793241db3f0dc38d8028580cb8f77a111f2359704a5e2707182aa1a
 
@@ -26,11 +26,11 @@ The workshop is delivered as a multi-page Streamlit guide application. Each sess
 | 3. Cortex Search | 30 min |
 | 4. Cortex Analyst & Semantic Views | 35 min |
 | **Break** | **15 min** |
-| 5. Cortex Agents | 30 min |
-| 6. CoWork | 25 min |
-| 7. Streamlit | 30 min |
+| 5. Cortex Agents | 25 min |
+| 6. CoWork | 20 min |
+| 7. Streamlit | 25 min |
 | Summary & Next Steps | 15 min |
-| **Total** | **~4.5 hrs** |
+| **Total** | **~4 hrs** |
 
 ---
 
@@ -102,14 +102,14 @@ This session is UI-guided. Participants use the **Semantic View Autopilot** in S
 
 ## Block 2: Agents & Apps
 
-### Session 5 — Cortex Agents (30 min)
+### Session 5 — Cortex Agents (25 min)
 
 **Objective:** Create a multi-tool AI agent combining structured portfolio analytics with investment document search.
 
 Participants create a Cortex Agent using the Snowsight UI:
 
 1. Create `PORTFOLIO_ANALYST_AGENT` in `SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS`
-2. Write orchestration instructions for the capital management domain
+2. Write orchestration instructions for the portfolio analytics domain
 3. Add `PORTFOLIO_ANALYTICS_VIEW` as the **Portfolio Data** tool (semantic view)
 4. Add `INVESTMENT_DOCS_SEARCH` as the **Investment Research** tool (Cortex Search) — this is the key differentiator from a single-tool agent
 5. Add sample questions demonstrating both data and document queries
@@ -120,7 +120,7 @@ Participants create a Cortex Agent using the Snowsight UI:
 
 ---
 
-### Session 6 — CoWork (25 min)
+### Session 6 — CoWork (20 min)
 
 **Objective:** Use the multi-tool agent in CoWork for collaborative portfolio analysis.
 
@@ -135,7 +135,7 @@ Participants open CoWork and interact with PORTFOLIO_ANALYST_AGENT:
 
 ---
 
-### Session 7 — Streamlit (30 min)
+### Session 7 — Streamlit (25 min)
 
 **Objective:** Build and deploy a Streamlit portfolio dashboard with KPIs and AI-powered insights.
 
