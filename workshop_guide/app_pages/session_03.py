@@ -145,7 +145,15 @@ st.write("")
 
 st.markdown("##### Step 10: Run these test queries")
 with st.container(border=True):
-    st.markdown("Enter each question below one at a time and observe which document chunks are returned:")
+    st.markdown("""
+Before running queries, add context columns to your results using the **Settings** panel on the right:
+
+1. Click the **Columns** dropdown in the Settings panel
+2. Select **DOCUMENT_NAME** and **DOCUMENT_TYPE** — this adds source context to each result so you can see which document and type each chunk came from
+3. These columns will now appear beneath each result chunk in the Playground
+
+Then enter each question below one at a time and observe which document chunks are returned:
+""")
 
     questions = [
         ("1. General research", "What is the analyst outlook for Canadian bank stocks?"),
