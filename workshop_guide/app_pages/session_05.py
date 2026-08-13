@@ -95,12 +95,31 @@ fund prospectuses, market commentary, and compliance documents.
 1. Still in the **Tools** sub-tab, click the **+ Add search** button next to **Search documents**
 2. Select `INVESTMENT_DOCS_SEARCH` (the Cortex Search service created in Session 3)
 3. Give the tool a name: `Investment_Research`
-4. Click **Generate with Cortex** to generate a description — it should describe the 15 investment documents indexed
-5. Click **Add**
+4. Paste the following into the **Description** field:
+""")
+    st.code(
+        "Searches 15 investment documents including research reports, fund prospectuses, quarterly reports, "
+        "investment memos, market commentary, risk assessments, and compliance notes. Use this tool to answer "
+        "questions about investment thesis, analyst recommendations, risk factors, ESG criteria, compliance "
+        "requirements, and document-level research across all indexed securities.",
+        language="text",
+        wrap_lines=True
+    )
+    st.markdown("""
+5. Under **Advanced configuration**, set the following:
+
+| Field | Value | Notes |
+|-------|-------|-------|
+| **Max results** | `5` | Maximum chunks the agent can retrieve per query |
+| **Target results** | `3` | Target number of high-quality results |
+| **ID column** | `CHUNK_ID` | Used to generate hyperlinks to the source |
+| **Title column** | `DOCUMENT_NAME` | Shown in citations and source cards |
+
+6. Leave **Indexed columns** empty and click **Add**
 
 Your agent now has two tools:
-- **Portfolio Data** — structured queries via Cortex Analyst
-- **Investment Research** — semantic search via Cortex Search
+- **Portfolio_Data** — structured queries via Cortex Analyst
+- **Investment_Research** — semantic search via Cortex Search
 """)
 
 st.markdown("""
