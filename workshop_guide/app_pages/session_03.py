@@ -24,57 +24,99 @@ with st.container(border=True):
     st.markdown("""
 1. In Snowsight, navigate to **AI & ML** in the left sidebar
 2. Click **Cortex Search**
-3. Click **Create** (or the **+** button) to start a new search service
+3. Click **+ Create** to open the Create Search Service wizard
 """)
 
 st.write("")
 
-st.markdown("##### Step 2: Select the source table")
+st.markdown("##### Step 2: New service — name and location")
 with st.container(border=True):
     st.markdown("""
-1. Set the database to **SLC_PORTFOLIO_AI** and schema to **PORTFOLIO_ANALYTICS**
-2. Select the source table: **DOCUMENT_CHUNKS**
-3. Click **Next**
+This is the first screen of the wizard. Fill in the following:
+
+| Field | Value |
+|-------|-------|
+| **Role** | `ACCOUNTADMIN` |
+| **Warehouse** | `CAPITAL_WH` |
+| **Service database and schema** | `SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS` |
+| **Service name** | `INVESTMENT_DOCS_SEARCH` |
+
+Click **Next**.
 """)
 
 st.write("")
 
-st.markdown("##### Step 3: Configure the search column and attributes")
+st.markdown("##### Step 3: Select data — choose the source table")
 with st.container(border=True):
     st.markdown("""
-1. Set the **Search column** to `CHUNK_TEXT` — this is the column that will be embedded and indexed for semantic search
-2. Under **Attribute columns**, select the following columns to use as filters:
-   - `DOCUMENT_TYPE`
-   - `SECURITY_TICKER`
-   - `DOCUMENT_NAME`
-   - `CHUNK_INDEX`
-3. Click **Next**
-
-**Why attributes?** Attribute columns are indexed as metadata — not embedded. They allow users and agents to filter search results by document type or security without affecting semantic scoring.
+1. Select the source table: **DOCUMENT_CHUNKS**
+2. Click **Next**
 """)
 
 st.write("")
 
-st.markdown("##### Step 4: Set the service name and compute")
+st.markdown("##### Step 4: Select search column")
 with st.container(border=True):
     st.markdown("""
-1. Enter the service name: `INVESTMENT_DOCS_SEARCH`
-2. Set the warehouse to **CAPITAL_WH**
-3. Set the **Target lag** to `1 day`
-4. Click **Create**
+1. Select **CHUNK_TEXT** as the search column — this is the column that will be embedded and indexed for semantic retrieval
+2. Click **Next**
+
+> **Why CHUNK_TEXT?** Each row in `DOCUMENT_CHUNKS` is a ~500-token segment of a PDF. Embedding at the chunk level gives Cortex Search a focused, semantically coherent unit to index — rather than embedding an entire document as one blob.
 """)
 
 st.write("")
 
-st.markdown("##### Step 5: Wait for indexing to complete")
+st.markdown("##### Step 5: Select attributes — filter columns")
 with st.container(border=True):
     st.markdown("""
-After clicking Create, Cortex Search will begin building the embedding index over all chunks in `DOCUMENT_CHUNKS`.
+Attribute columns are indexed as metadata and allow filtering of search results without affecting semantic scoring.
+
+Select the following columns as attributes:
+- `DOCUMENT_TYPE`
+- `SECURITY_TICKER`
+- `DOCUMENT_NAME`
+- `CHUNK_INDEX`
+
+Click **Next**.
+""")
+
+st.write("")
+
+st.markdown("##### Step 6: Select columns — result columns")
+with st.container(border=True):
+    st.markdown("""
+Select all columns to include in search results. At minimum include:
+- `CHUNK_ID`
+- `CHUNK_TEXT`
+- `DOCUMENT_NAME`
+- `DOCUMENT_TYPE`
+- `SECURITY_TICKER`
+- `CHUNK_INDEX`
+
+Click **Next**.
+""")
+
+st.write("")
+
+st.markdown("##### Step 7: Configure indexing — target lag and warehouse")
+with st.container(border=True):
+    st.markdown("""
+1. Set **Target lag** to `1 day`
+2. Confirm the warehouse is set to **CAPITAL_WH**
+3. Click **Create**
+""")
+
+st.write("")
+
+st.markdown("##### Step 8: Wait for indexing to complete")
+with st.container(border=True):
+    st.markdown("""
+After clicking Create, Cortex Search begins building the embedding index over all chunks in `DOCUMENT_CHUNKS`.
 
 1. You'll see `INVESTMENT_DOCS_SEARCH` appear in the Cortex Search list
 2. Wait until the status shows **Ready** before proceeding
 
-Indexing the investment documents typically takes 1-3 minutes.
+Indexing the investment documents typically takes 1–3 minutes.
 """)
 
 st.markdown("---")
@@ -87,7 +129,7 @@ With the service ready, use the built-in Preview interface to test semantic sear
 
 st.write("")
 
-st.markdown("##### Step 6: Open the Preview")
+st.markdown("##### Step 9: Open the Preview")
 with st.container(border=True):
     st.markdown("""
 1. In Snowsight, navigate to **AI & ML > Cortex Search**
@@ -97,7 +139,7 @@ with st.container(border=True):
 
 st.write("")
 
-st.markdown("##### Step 7: Run these test queries")
+st.markdown("##### Step 10: Run these test queries")
 with st.container(border=True):
     st.markdown("Enter each question below one at a time and observe which document chunks are returned:")
 
@@ -123,7 +165,7 @@ with st.container(border=True):
 
 st.write("")
 
-st.markdown("##### Step 8: Test attribute filtering")
+st.markdown("##### Step 11: Test attribute filtering")
 with st.container(border=True):
     st.markdown("""
 The attribute columns you configured allow precise filtering alongside semantic search:
