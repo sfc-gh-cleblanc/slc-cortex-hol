@@ -131,12 +131,27 @@ st.markdown("##### 7.3 — Deploy Your App")
 
 with st.container(border=True):
     st.markdown("""
-Once the dashboard is running without errors, deploy it so others can discover and use it:
+Once the dashboard is running without errors, click **Deploy** in the top-right of the Workspaces editor. The Deploy app dialog has the following fields:
 
-1. Click the **Deploy** button in the top-right of the Workspaces editor
-2. Select the database: **SLC_PORTFOLIO_AI**
-3. Select the schema: **PORTFOLIO_ANALYTICS**
-4. Click **Deploy** to publish
+**App details**
+
+| Field | Value | Notes |
+|-------|-------|-------|
+| **App title** | `portfolio-dashboard` | Displayed in the top left of the app |
+| **App ID** | `PORTFOLIO_DASHBOARD` | Used in the URL — auto-populated |
+| **Deployed app owner role matches preview role** | ✅ Checked | Ensures the app runs as ACCOUNTADMIN |
+
+**Execution tab**
+
+| Field | Value | Notes |
+|-------|-------|-------|
+| **App location** | `SLC_PORTFOLIO_AI` / `PORTFOLIO_ANALYTICS` | Where the Streamlit object is created |
+| **Compute pool** | `SYSTEM_COMPUTE_POOL_CPU` | Default — leave as-is |
+| **Query warehouse** | `CAPITAL_WH` | ⚠️ **Change this** — the default will be a system warehouse, not your workshop warehouse |
+
+> **Important:** Always check the **Query warehouse** field before deploying. The default is usually a system compute pool warehouse that won't have access to your data. Set it to **CAPITAL_WH**.
+
+Click **Deploy** to publish.
 
 Once deployed, the app becomes a first-class Snowflake object. Other users in your account can discover it from the **Projects > Streamlit** menu in Snowsight and access it based on their role permissions.
 """)
