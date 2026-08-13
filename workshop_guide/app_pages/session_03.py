@@ -128,17 +128,17 @@ st.markdown("---")
 st.markdown("#### :material/query_stats: Test with the Interactive Search UI")
 
 st.markdown("""
-With the service ready, use the built-in Preview interface to test semantic search across your investment documents.
+With the service ready, use the built-in Playground to test semantic search across your investment documents.
 """)
 
 st.write("")
 
-st.markdown("##### Step 9: Open the Preview")
+st.markdown("##### Step 9: Open the Playground")
 with st.container(border=True):
     st.markdown("""
 1. In Snowsight, navigate to **AI & ML > Cortex Search**
 2. Click on `INVESTMENT_DOCS_SEARCH`
-3. Click the **Preview** tab to open the interactive search interface
+3. Click the **Playground** button (top right of the service detail page) to open the interactive search interface
 """)
 
 st.write("")
@@ -174,7 +174,7 @@ with st.container(border=True):
     st.markdown("""
 The attribute columns you configured allow precise filtering alongside semantic search:
 
-1. In the Preview interface, find the **Filters** panel
+1. In the Playground, find the **Filters** panel
 2. Set `DOCUMENT_TYPE` = `Investment Memo`
 3. Search for: `infrastructure investment thesis`
 4. Confirm only chunks from the investment memo documents are returned
@@ -206,7 +206,7 @@ render_explanation("How Cortex Search works", """
 
 
 render_key_concepts([
-    {"term": "Cortex Search Service", "definition": "A Snowflake-native search service created via the Snowsight UI or SQL. It indexes a text column from a table or query, builds an embedding index, and enables semantic retrieval through the Preview UI or the REST API."},
+    {"term": "Cortex Search Service", "definition": "A Snowflake-native search service created via the Snowsight UI or SQL. It indexes a text column from a table or query, builds an embedding index, and enables semantic retrieval through the Playground or the REST API."},
     {"term": "Embedding Index", "definition": "A searchable index of dense vector representations of text. Each chunk is represented as a high-dimensional vector. Similar meanings produce similar vectors, enabling semantic retrieval by nearest-neighbor search."},
     {"term": "Hybrid Search", "definition": "A retrieval strategy that combines dense vector search (semantic similarity) with sparse BM25 (keyword frequency) scoring. Produces better results than either method alone, especially for mixed natural language and specific-term queries."},
     {"term": "Attribute Columns", "definition": "Columns configured as filterable metadata on a Cortex Search service. They are indexed separately from the search column and allow results to be filtered by value (e.g., document_type = 'Research Report') without affecting semantic scoring."},
@@ -215,7 +215,7 @@ render_key_concepts([
 
 render_what_you_built([
     "INVESTMENT_DOCS_SEARCH — Cortex Search service over 15 investment PDFs",
-    "Semantic search tested across multiple query patterns via the Preview UI",
+    "Semantic search tested across multiple query patterns via the Playground",
     "Attribute filtering by document_type demonstrated",
     "Search service ready to be added as an agent tool in Session 5",
 ])
