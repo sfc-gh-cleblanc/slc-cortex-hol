@@ -73,13 +73,13 @@ Domain context:
 
 st.write("")
 
-st.markdown("##### Step 4: Add the semantic view as the Portfolio Data tool")
+st.markdown("##### Step 4: Add the semantic view as the Portfolio_Data tool")
 with st.container(border=True):
     st.markdown("""
 1. Click the **Tools** sub-tab (still under Configuration)
 2. Next to **Query structured data**, click the **+ Add semantic view** button
 3. Select `PORTFOLIO_ANALYTICS_VIEW` (the semantic view created in Session 4)
-4. Give the tool a name: `Portfolio Data`
+4. Give the tool a name: `Portfolio_Data`
 5. Click **Generate with Cortex** to create a detailed description for the tool
 6. Click **Add**
 """)
@@ -94,7 +94,7 @@ fund prospectuses, market commentary, and compliance documents.
 
 1. Still in the **Tools** sub-tab, click the **+ Add search** button next to **Search documents**
 2. Select `INVESTMENT_DOCS_SEARCH` (the Cortex Search service created in Session 3)
-3. Give the tool a name: `Investment Research`
+3. Give the tool a name: `Investment_Research`
 4. Click **Generate with Cortex** to generate a description — it should describe the 15 investment documents indexed
 5. Click **Add**
 
