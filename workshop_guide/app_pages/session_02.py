@@ -104,30 +104,36 @@ LIMIT 5;
 """)
 
 render_explanation("DOCUMENT_CHUNKS pipeline: step by step", """
-The most complex cell in the notebook chains four AI operations in a single `CREATE TABLE AS`:
+The notebook cell uses three CTEs so each PDF is parsed only once:
 
 ```sql
 CREATE OR REPLACE TABLE DOCUMENT_CHUNKS AS
 WITH parsed AS (
-    -- 1. Parse each PDF and classify its document type
+    -- Parse each PDF once; reuse full_text in the next CTE
     SELECT
         RELATIVE_PATH AS document_name,
-        AI_PARSE_DOCUMENT(TO_FILE('@INVESTMENT_DOCS', RELATIVE_PATH), {'mode': 'LAYOUT'}):content::VARCHAR AS full_text,
-        AI_CLASSIFY(full_text, ['Research Report', 'Investment Memo', ...]):label::VARCHAR AS document_type
+        AI_PARSE_DOCUMENT(TO_FILE('@INVESTMENT_DOCS', RELATIVE_PATH), {'mode': 'LAYOUT'}):content::VARCHAR AS full_text
     FROM DIRECTORY('@INVESTMENT_DOCS')
 ),
+classified AS (
+    -- Classify document type using the already-parsed text
+    SELECT document_name, full_text,
+        AI_CLASSIFY(full_text, ['Research Report', 'Investment Memo', ...])):label::VARCHAR AS document_type
+    FROM parsed
+),
 chunks AS (
-    -- 2. Split each document into ~500-token chunks with 50-token overlap
+    -- Split each document into ~500-token chunks with 50-token overlap
     SELECT document_name, document_type, chunk.value::VARCHAR AS chunk_text, chunk.index AS chunk_index
-    FROM parsed,
+    FROM classified,
     LATERAL FLATTEN(input => SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER(full_text, 'none', 500, 50)) AS chunk
 )
--- 3. Tag each chunk with the primary security ticker
 SELECT UUID_STRING() AS chunk_id, document_name, document_type, chunk_text, chunk_index,
-    AI_EXTRACT(chunk_text, {'security_ticker': '...'})... AS security_ticker
+    AI_EXTRACT(chunk_text, {'security_ticker': '...'}):response:security_ticker::VARCHAR AS security_ticker
 FROM chunks
 WHERE LENGTH(chunk_text) > 100;
 ```
+
+**Why three CTEs?** `AI_CLASSIFY` can't reference `full_text` as a column alias in the same SELECT — it needs to be in a separate CTE. Splitting parsing and classification also means each PDF is parsed only once rather than twice.
 
 **Why chunk size matters**: Cortex Search ranks at the chunk level — it returns the most relevant chunks, not entire documents. 500 tokens balances precision vs. context. The 50-token overlap ensures sentences split across chunk boundaries are partially repeated in both chunks.
 """)
