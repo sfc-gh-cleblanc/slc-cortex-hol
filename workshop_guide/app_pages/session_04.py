@@ -83,20 +83,23 @@ st.write("")
 st.markdown("##### Step 6: Confirm relationships")
 with st.container(border=True):
     st.markdown("""
-When the Autopilot completes its analysis, scroll down to the **Relationships** section. There will be several relationships detected — these define the table joins that Cortex Analyst will use when generating SQL.
+Relationships are shown in the **Suggestions panel** on the right side of the screen — not inline in the main editor.
 
-Expected relationships:
-- `POSITIONS.CLIENT_ID` → `CLIENTS.CLIENT_ID`
-- `POSITIONS.SECURITY_ID` → `SECURITIES.SECURITY_ID`
-- `SECURITIES.ASSET_CLASS` → `ASSET_CLASSES.NAME`
-- `EXTRACTED_INVESTMENT_INSIGHTS.SECURITY_ID` → `SECURITIES.SECURITY_ID`
+1. Look for the **Suggestions** tab in the top-right panel (it will show a count, e.g. **Suggestions 9**)
+2. Scroll down within the Suggestions panel to the **Relationships** section — it will show **5 detected relationships**
+3. For each relationship, click **Review** to inspect the join, then click **Add** to include it in the semantic view
+4. Repeat until all 5 relationships are added
 
-For each relationship:
-1. Click the relationship
-2. Click **Review**
-3. Click **Add** to include it within the semantic view
+The 5 expected relationships are:
+| Relationship | Join |
+|---|---|
+| `EXTRACTED_INVESTMENT_INSIGHTS_TO_SECURITIES` | `EXTRACTED_INVESTMENT_INSIGHTS.SECURITY_ID` → `SECURITIES.SECURITY_ID` |
+| `POSITIONS_TO_ASSET_CLASSES` | `POSITIONS` → `ASSET_CLASSES` |
+| `POSITIONS_TO_CLIENTS` | `POSITIONS.CLIENT_ID` → `CLIENTS.CLIENT_ID` |
+| `POSITIONS_TO_SECURITIES` | `POSITIONS.SECURITY_ID` → `SECURITIES.SECURITY_ID` |
+| `SECURITIES_TO_ASSET_CLASSES` | `SECURITIES.ASSET_CLASS` → `ASSET_CLASSES.NAME` |
 
-Repeat for all detected relationships to ensure Cortex Analyst can join across your tables correctly.
+These relationships define the table joins that Cortex Analyst uses when generating SQL. Adding all of them ensures cross-table questions work correctly.
 """)
 
 st.write("")
