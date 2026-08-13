@@ -108,13 +108,17 @@ with st.container(border=True):
 
 st.write("")
 
-st.markdown("##### Step 8: Wait for indexing to complete")
+st.markdown("##### Step 8: Wait for the service to become Active")
 with st.container(border=True):
     st.markdown("""
-After clicking Create, Cortex Search begins building the embedding index over all chunks in `DOCUMENT_CHUNKS`.
+After clicking Create, you'll be returned to the Cortex Search list. The service will appear with two status columns:
 
-1. You'll see `INVESTMENT_DOCS_SEARCH` appear in the Cortex Search list
-2. Wait until the status shows **Ready** before proceeding
+| Column | What it means |
+|--------|---------------|
+| **INDEXING** | Whether the embedding index is being built or is up to date |
+| **SERVING** | Whether the service is ready to accept search queries |
+
+Wait until **both INDEXING and SERVING show `ACTIVE`** before proceeding.
 
 Indexing the investment documents typically takes 1–3 minutes.
 """)
