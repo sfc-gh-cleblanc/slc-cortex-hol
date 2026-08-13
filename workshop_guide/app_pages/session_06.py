@@ -32,8 +32,8 @@ st.caption("Copy and paste each question into CoWork individually. They build on
 questions = [
     ("1. Portfolio Overview",
      "Show me a summary of our assets under management — total portfolio value, number of active clients, average portfolio size by account type, and the top 5 asset classes by total value."),
-    ("2. Concentration Risk",
-     "Which securities represent more than 5% of any single client's total portfolio value? Show me concentration risk by client and security, ranked by severity."),
+    ("2. Investment Recommendations",
+     "What are the latest investment recommendations, price targets, key risks, investment horizons, and suggested portfolio actions across our tracked tickers?"),
     ("3. Analyst Sentiment",
      "What is the current distribution of analyst recommendations (Buy, Hold, Sell, Overweight, Underweight) across our held securities? Are there any securities where the analyst rating appears inconsistent with our current position size?"),
     ("4. Research: Infrastructure",
