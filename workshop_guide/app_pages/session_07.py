@@ -11,13 +11,23 @@ render_technologies_used([
 
 st.markdown("---")
 
-st.markdown("#### :material/open_in_new: Open Workspaces")
+st.markdown("#### :material/folder_open: Create a new Workspace")
 with st.container(border=True):
     st.markdown("""
-For this section, open **Workspaces** in Snowsight (left navigation panel > Projects > Workspaces).
-Workspaces provides an IDE-like environment where Cortex Code can create and edit Streamlit app files directly.
+1. In Snowsight, navigate to **Projects > Workspaces** in the left sidebar
+2. Click **+ Workspace** (top right)
+3. Name it **`Streamlit Dashboard`** and click **Create**
 
-Paste the prompts below into Cortex Code **within Workspaces** so the generated code is written directly into your app files.
+You'll use this workspace to build and iterate on the portfolio dashboard app with Cortex Code.
+""")
+
+st.write("")
+
+st.markdown("#### :material/open_in_new: Open Cortex Code in the Workspace")
+with st.container(border=True):
+    st.markdown("""
+Inside your new workspace, open Cortex Code and paste the prompts below.
+Workspaces provides an IDE-like environment where Cortex Code can create and edit Streamlit app files directly.
 """)
 
 
