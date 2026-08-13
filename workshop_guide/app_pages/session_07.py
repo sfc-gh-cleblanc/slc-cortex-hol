@@ -184,15 +184,18 @@ st.markdown("#### :material/star: Bonus: Add an AI Chat Interface")
 
 with st.container(border=True):
     st.markdown("""
-Want to take your dashboard further? Add a chat box that lets portfolio managers ask natural language questions about the data, powered by the agent you built in Session 5.
+Want to take your dashboard further? Add a chat interface that lets portfolio managers ask natural language questions about the data directly within the dashboard.
 
-Using what you've learned, write a prompt for Cortex Code in Workspaces that adds an "Ask AI" tab with a conversational chat interface. Consider:
-- Using `st.chat_input` and `st.chat_message` for the UI
-- Calling `SNOWFLAKE.CORTEX.COMPLETE` with a model like `claude-sonnet-4-6`
-- Passing current KPI values (total AUM, top asset class, etc.) as context so the model can reference actual portfolio data
-- Maintaining chat history in `st.session_state`
-
-After adding, click **Keep All** and **Run** to test. This demonstrates how `AI_COMPLETE` can power conversational interfaces directly within Streamlit apps — giving portfolio managers an AI assistant embedded alongside their operational dashboard.
+Paste the following prompt into Cortex Code in your Workspace:
+""")
+    st.code(
+        "Add an 'Ask AI' tab to the portfolio dashboard that lets users type questions about the portfolio "
+        "and receive AI-generated answers based on the current portfolio data.",
+        language="text",
+        wrap_lines=True
+    )
+    st.markdown("""
+Click **Keep All** and **Run** to test the new tab.
 """)
 
 st.markdown("---")
