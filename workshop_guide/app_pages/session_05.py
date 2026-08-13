@@ -98,7 +98,7 @@ fund prospectuses, market commentary, and compliance documents.
 4. Paste the following into the **Description** field:
 """)
     st.code(
-        "Searches 15 investment documents including research reports, fund prospectuses, quarterly reports, "
+        "Searches investment documents including research reports, fund prospectuses, quarterly reports, "
         "investment memos, market commentary, risk assessments, and compliance notes. Use this tool to answer "
         "questions about investment thesis, analyst recommendations, risk factors, ESG criteria, compliance "
         "requirements, and document-level research across all indexed securities.",
