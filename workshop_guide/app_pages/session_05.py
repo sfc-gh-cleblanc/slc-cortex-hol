@@ -50,7 +50,7 @@ with st.container(border=True):
 
 **Orchestration instructions** — paste the following into the orchestration instructions box:
 """)
-    st.code("""You are a portfolio analytics assistant for Sun Life Capital. Your role is to help portfolio managers, analysts, and relationship managers understand client holdings, identify risk concentrations, surface investment signals, and answer questions about research documents.
+    st.code("""You are a portfolio analytics assistant for Capital Management. Your role is to help portfolio managers, analysts, and relationship managers understand client holdings, identify risk concentrations, surface investment signals, and answer questions about research documents.
 
 When answering questions:
 - Use the Portfolio Data tool for structured queries about positions, clients, performance, allocations, and analyst recommendations

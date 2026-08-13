@@ -133,7 +133,7 @@ When a Cortex Agent has multiple tools available, it uses the view description t
 1. Click the **Edit** button (pencil icon) to the right of the view name at the top
 2. In the description field, paste the following description:
 """)
-    st.code("Portfolio analytics for Sun Life Capital covering client investment accounts, portfolio positions, security reference data, asset class allocations, and AI-extracted analyst insights. Use this view for questions about total assets under management, portfolio performance, unrealized gains and losses, asset class allocation drift, security exposure by sector, client risk profiles, position concentration, analyst recommendation trends, and account type breakdowns.", language="text", wrap_lines=True)
+    st.code("Portfolio analytics for Capital Management covering client investment accounts, portfolio positions, security reference data, asset class allocations, and AI-extracted analyst insights. Use this view for questions about total assets under management, portfolio performance, unrealized gains and losses, asset class allocation drift, security exposure by sector, client risk profiles, position concentration, analyst recommendation trends, and account type breakdowns.", language="text", wrap_lines=True)
     st.markdown("""
 3. Click **Apply** to accept this update
 

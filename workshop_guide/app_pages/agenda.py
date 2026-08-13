@@ -50,5 +50,5 @@ with st.container(border=True):
 :material/schedule: **~4 hours**
 (including 15-minute break between Block 1 and Block 2)
 
-Sun Life Capital Management AI Workshop — August 21, 2026
+Capital Management AI Workshop — August 21, 2026
 """)

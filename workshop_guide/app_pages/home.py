@@ -22,7 +22,7 @@ st.write("")
 st.markdown("#### The scenario")
 with st.container(border=True):
     st.markdown("""
-Sun Life Capital manages pension plans, registered accounts (RRSP, RRIF, TFSA), and institutional portfolios
+Capital Management manages pension plans, registered accounts (RRSP, RRIF, TFSA), and institutional portfolios
 on behalf of thousands of Canadian clients. Portfolio managers and analysts need to track position-level performance,
 extract insights from investment research documents, monitor risk concentrations, and surface timely recommendations
 — all while handling a growing volume of unstructured research reports, compliance notes, and market commentary.
@@ -70,4 +70,4 @@ with st.container(border=True):
 """)
 
 st.write(""); st.write("")
-st.caption("Sun Life Capital Management AI Workshop — TBD")
+st.caption("Capital Management AI Workshop — TBD")
