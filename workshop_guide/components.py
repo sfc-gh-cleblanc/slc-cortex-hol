@@ -3,7 +3,7 @@ import streamlit as st
 SESSION_PROMPTS = {
     1: ["Prompt 1.1", "Prompt 1.2", "Prompt 1.3", "Prompt 1.4"],
     2: ["Prompt 2.1", "Prompt 2.2", "Prompt 2.3", "Prompt 2.4"],
-    3: ["Prompt 3.1", "Prompt 3.2"],
+    3: [],
     4: [],
     5: [],
     6: [],

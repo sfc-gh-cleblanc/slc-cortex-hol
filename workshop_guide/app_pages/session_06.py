@@ -1,7 +1,7 @@
 import streamlit as st
 from components import render_session_header, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
 
-render_session_header(6, "CoWork", "25 min", "Collaborative AI analysis of portfolio data and investment research")
+render_session_header(6, "CoWork", "20 min", "Collaborative AI analysis of portfolio data and investment research")
 
 render_technologies_used([
     {"name": "Snowflake CoWork", "description": "An AI-powered collaborative workspace inside Snowsight where you can analyze data, generate insights, and share findings with your team — all through natural language conversation.", "icon": "group"},

@@ -67,7 +67,7 @@ st.markdown("""
 **Before running the prompt below, download the workshop data files and upload them to the `DATA` stage:**
 
 1. **Download** the workshop repository as a ZIP file:
-   **[Download ZIP](https://github.com/sfc-gh-cleblanc/cortex-hol/archive/refs/heads/main.zip)**
+   **[Download ZIP](https://github.com/sfc-gh-cleblanc/slc-cortex-hol/archive/refs/heads/main.zip)**
 2. **Unzip** the downloaded file. The required CSV data files are located in the `workshop_guide/data/` folder:
    `clients.csv`, `positions.csv`, `securities.csv`, `asset_classes.csv`, `analyst_notes.csv`, `client_communications.csv`
 3. In Snowsight, navigate to **Data > Databases > SLC_PORTFOLIO_AI > PORTFOLIO_ANALYTICS > Stages > DATA** and upload all 6 CSV files from that folder.

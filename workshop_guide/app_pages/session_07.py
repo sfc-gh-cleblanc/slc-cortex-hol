@@ -1,7 +1,7 @@
 import streamlit as st
 from components import render_session_header, render_prompt, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
 
-render_session_header(7, "Streamlit", "30 min", "Portfolio dashboard with KPIs, charts, and AI-powered investment insights")
+render_session_header(7, "Streamlit", "25 min", "Portfolio dashboard with KPIs, charts, and AI-powered investment insights")
 
 render_technologies_used([
     {"name": "Streamlit in Snowflake (SiS)", "description": "Deploy Python-based data apps directly within Snowflake. Apps run on container runtime with full Python package support, access data natively via Snowpark, and inherit Snowflake's security model.", "icon": "web"},

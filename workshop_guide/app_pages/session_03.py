@@ -1,5 +1,5 @@
 import streamlit as st
-from components import render_session_header, render_prompt, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
+from components import render_session_header, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
 
 render_session_header(3, "Cortex Search", "30 min", "Search service over investment documents, tested with semantic queries")
 
@@ -17,167 +17,125 @@ In this session, you'll create a Cortex Search service over the `DOCUMENT_CHUNKS
 The service embeds and indexes the `chunk_text` column, enabling semantic search across all 15 investment documents.
 """)
 
-PROMPT_3_1 = """In SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS, create a Cortex Search service over the DOCUMENT_CHUNKS table.
+st.write("")
 
-The search service should:
-1. Index the chunk_text column as the searchable content
-2. Include document_type and security_ticker as filterable attributes (ATTRIBUTES clause)
-3. Also include document_name and chunk_index as attributes for display
-4. Use CAPITAL_WH for indexing compute
-5. Set TARGET_LAG to '1 day'
-6. Name the service INVESTMENT_DOCS_SEARCH
-
-Create the service and then check its status to confirm indexing has started.
-
-Use SHOW CORTEX SEARCH SERVICES to verify it was created."""
-
-render_prompt("Prompt 3.1", "Create the Cortex Search Service", PROMPT_3_1)
-
-render_explanation("What this prompt does", """
-Creates a Cortex Search service and begins building the embedding index:
-
-```sql
-CREATE OR REPLACE CORTEX SEARCH SERVICE INVESTMENT_DOCS_SEARCH
-  ON chunk_text
-  ATTRIBUTES document_type, security_ticker, document_name, chunk_index
-  TARGET_LAG = '1 day'
-  WAREHOUSE = CAPITAL_WH
-  AS (
-    SELECT chunk_id, chunk_text, document_type, security_ticker, document_name, chunk_index
-    FROM SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.DOCUMENT_CHUNKS
-  );
-
--- Check status
-SHOW CORTEX SEARCH SERVICES IN SCHEMA SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS;
-```
-
-**How Cortex Search builds its index**:
-1. Cortex reads every row from the source query (our DOCUMENT_CHUNKS subquery)
-2. It generates dense vector embeddings for each `chunk_text` value using Snowflake's embedding model
-3. It builds a hybrid index combining those embeddings (semantic search) with BM25 inverted index (keyword search)
-4. ATTRIBUTES columns are indexed separately as metadata — no embedding needed for filter-only columns
-
-**TARGET_LAG** defines how fresh the index is. A 1-day lag means new chunks added to DOCUMENT_CHUNKS will be searchable within 24 hours. For real-time search, set `TARGET_LAG = '1 minute'` (incurs more compute cost).
+st.markdown("##### Step 1: Open Cortex Search in Snowsight")
+with st.container(border=True):
+    st.markdown("""
+1. In Snowsight, navigate to **AI & ML** in the left sidebar
+2. Click **Cortex Search**
+3. Click **Create** (or the **+** button) to start a new search service
 """)
 
 st.write("")
-st.markdown("##### :material/check: Confirm the index is ready")
+
+st.markdown("##### Step 2: Select the source table")
 with st.container(border=True):
     st.markdown("""
-After creating the service, check its status:
+1. Set the database to **SLC_PORTFOLIO_AI** and schema to **PORTFOLIO_ANALYTICS**
+2. Select the source table: **DOCUMENT_CHUNKS**
+3. Click **Next**
+""")
 
-1. In Snowsight, navigate to **AI & ML > Cortex Search**
-2. Find `INVESTMENT_DOCS_SEARCH` — you should see it listed with its indexing status
-3. Wait until the status shows **Ready** before running the search tests below
+st.write("")
 
-Indexing 15 documents with a few hundred chunks typically takes 1-3 minutes.
+st.markdown("##### Step 3: Configure the search column and attributes")
+with st.container(border=True):
+    st.markdown("""
+1. Set the **Search column** to `CHUNK_TEXT` — this is the column that will be embedded and indexed for semantic search
+2. Under **Attribute columns**, select the following columns to use as filters:
+   - `DOCUMENT_TYPE`
+   - `SECURITY_TICKER`
+   - `DOCUMENT_NAME`
+   - `CHUNK_INDEX`
+3. Click **Next**
+
+**Why attributes?** Attribute columns are indexed as metadata — not embedded. They allow users and agents to filter search results by document type or security without affecting semantic scoring.
+""")
+
+st.write("")
+
+st.markdown("##### Step 4: Set the service name and compute")
+with st.container(border=True):
+    st.markdown("""
+1. Enter the service name: `INVESTMENT_DOCS_SEARCH`
+2. Set the warehouse to **CAPITAL_WH**
+3. Set the **Target lag** to `1 day`
+4. Click **Create**
+""")
+
+st.write("")
+
+st.markdown("##### Step 5: Wait for indexing to complete")
+with st.container(border=True):
+    st.markdown("""
+After clicking Create, Cortex Search will begin building the embedding index over all chunks in `DOCUMENT_CHUNKS`.
+
+1. You'll see `INVESTMENT_DOCS_SEARCH` appear in the Cortex Search list
+2. Wait until the status shows **Ready** before proceeding
+
+Indexing the investment documents typically takes 1-3 minutes.
 """)
 
 st.markdown("---")
 
-st.markdown("#### :material/query_stats: Test with SQL Search Queries")
+st.markdown("#### :material/query_stats: Test with the Interactive Search UI")
 
-PROMPT_3_2 = """In SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS, test the INVESTMENT_DOCS_SEARCH Cortex Search service with three queries.
-
-Use SNOWFLAKE.CORTEX.SEARCH_PREVIEW to run each query:
-
-Query 1 - General research search:
-Ask: "What is the analyst outlook for Canadian bank stocks?" 
-Return columns: chunk_text, document_name, document_type
-Limit: 5 results
-
-Query 2 - Filter by document type:
-Ask: "infrastructure investment thesis and rising rate impact"
-Filter to document_type = 'Investment Memo' only
-Return: chunk_text, document_name
-Limit: 3 results
-
-Query 3 - Security-specific search:
-Ask: "NVIDIA artificial intelligence revenue growth data center"
-Filter to document_type = 'Research Report'
-Return: chunk_text, document_name, security_ticker
-Limit: 3 results
-
-Parse and display the results from each query. Show the chunk_text content so we can verify relevance.
-
-Execute all SQL."""
-
-render_prompt("Prompt 3.2", "Test Cortex Search Queries", PROMPT_3_2)
-
-render_explanation("What this prompt does", """
-Uses the SEARCH_PREVIEW function to query the Cortex Search service directly from SQL:
-
-```sql
--- Query 1: General semantic search
-SELECT PARSE_JSON(
-    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-        'SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.INVESTMENT_DOCS_SEARCH',
-        '{
-            "query": "What is the analyst outlook for Canadian bank stocks?",
-            "columns": ["chunk_text", "document_name", "document_type"],
-            "limit": 5
-        }'
-    )
-)['results'] AS search_results;
-
--- Query 2: Filter by document type
-SELECT PARSE_JSON(
-    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-        'SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.INVESTMENT_DOCS_SEARCH',
-        '{
-            "query": "infrastructure investment thesis rising rate impact",
-            "columns": ["chunk_text", "document_name"],
-            "filter": {"@eq": {"document_type": "Investment Memo"}},
-            "limit": 3
-        }'
-    )
-)['results'] AS filtered_results;
-
--- Query 3: Security-specific with type filter
-SELECT PARSE_JSON(
-    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-        'SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.INVESTMENT_DOCS_SEARCH',
-        '{
-            "query": "NVIDIA artificial intelligence revenue growth data center",
-            "columns": ["chunk_text", "document_name", "security_ticker"],
-            "filter": {"@eq": {"document_type": "Research Report"}},
-            "limit": 3
-        }'
-    )
-)['results'] AS nvda_results;
-```
-
-**Filter syntax**: The `filter` field accepts a JSON expression:
-- `{"@eq": {"field": "value"}}` — exact match
-- `{"@in": {"field": ["v1", "v2"]}}` — match any of the values
-- `{"@and": [...]}` / `{"@or": [...]}` — compound filters
-
-**Semantic vs. keyword search**: The query `"NVIDIA AI revenue"` will return relevant chunks even if those exact words aren't present — it matches on *meaning*, not just string overlap. This is what makes Cortex Search powerful for investment research where the same concept may be described in many ways.
+st.markdown("""
+With the service ready, use the built-in Preview interface to test semantic search across your investment documents.
 """)
 
 st.write("")
 
-st.markdown("##### :material/lightbulb: Explore the Search UI")
+st.markdown("##### Step 6: Open the Preview")
 with st.container(border=True):
     st.markdown("""
-After running the SQL tests, try the interactive search UI:
-
 1. In Snowsight, navigate to **AI & ML > Cortex Search**
 2. Click on `INVESTMENT_DOCS_SEARCH`
-3. Click **Preview** to open the interactive search interface
-4. Try these questions:
+3. Click the **Preview** tab to open the interactive search interface
 """)
+
+st.write("")
+
+st.markdown("##### Step 7: Run these test queries")
+with st.container(border=True):
+    st.markdown("Enter each question below one at a time and observe which document chunks are returned:")
+
     questions = [
-        "What risks are associated with our fixed income portfolio?",
-        "What are the ESG screening criteria updates?",
-        "Which companies have been upgraded by analysts recently?",
-        "What are the compliance requirements for personal trading?",
-        "How is the Bank of Canada rate cycle affecting our portfolio positioning?",
+        ("1. General research", "What is the analyst outlook for Canadian bank stocks?"),
+        ("2. Infrastructure thesis", "infrastructure investment thesis and rising rate impact"),
+        ("3. Risk assessment", "What risks are associated with our fixed income portfolio?"),
+        ("4. ESG criteria", "What are the ESG screening criteria updates?"),
+        ("5. Compliance", "What are the compliance requirements for personal trading?"),
+        ("6. Rate cycle", "How is the Bank of Canada rate cycle affecting our portfolio positioning?"),
     ]
-    for q in questions:
-        st.code(q, language="text", wrap_lines=True)
+    for title, q in questions:
+        with st.container(border=True):
+            st.markdown(f"**{title}**")
+            st.code(q, language="text", wrap_lines=True)
+
     st.markdown("""
-Observe how Cortex Search returns the most relevant passages from across all 15 documents — regardless of which specific document contains the answer.
+**What to observe**:
+- Results are drawn from across all 15 documents — regardless of which specific file contains the answer
+- The most semantically relevant chunks appear first, even if the exact query words don't appear in the text
+- Try using the filter panel to narrow results by `DOCUMENT_TYPE` (e.g., filter to "Investment Memo" only)
+""")
+
+st.write("")
+
+st.markdown("##### Step 8: Test attribute filtering")
+with st.container(border=True):
+    st.markdown("""
+The attribute columns you configured allow precise filtering alongside semantic search:
+
+1. In the Preview interface, find the **Filters** panel
+2. Set `DOCUMENT_TYPE` = `Investment Memo`
+3. Search for: `infrastructure investment thesis`
+4. Confirm only chunks from the investment memo documents are returned
+
+Try a second filter:
+- Set `DOCUMENT_TYPE` = `Research Report`
+- Search for: `NVIDIA artificial intelligence data center revenue`
 """)
 
 st.info("""
@@ -202,16 +160,38 @@ render_explanation("How Cortex Search works", """
 
 
 render_key_concepts([
-    {"term": "Cortex Search Service", "definition": "A Snowflake-native search service created with CREATE CORTEX SEARCH SERVICE. It indexes a text column from a table or query, builds an embedding index, and enables semantic retrieval via SEARCH_PREVIEW or the REST API."},
+    {"term": "Cortex Search Service", "definition": "A Snowflake-native search service created via the Snowsight UI or SQL. It indexes a text column from a table or query, builds an embedding index, and enables semantic retrieval through the Preview UI or the REST API."},
     {"term": "Embedding Index", "definition": "A searchable index of dense vector representations of text. Each chunk is represented as a high-dimensional vector. Similar meanings produce similar vectors, enabling semantic retrieval by nearest-neighbor search."},
     {"term": "Hybrid Search", "definition": "A retrieval strategy that combines dense vector search (semantic similarity) with sparse BM25 (keyword frequency) scoring. Produces better results than either method alone, especially for mixed natural language and specific-term queries."},
-    {"term": "ATTRIBUTES clause", "definition": "Columns specified as ATTRIBUTES in a Cortex Search service are indexed as metadata, not as embedding inputs. They can be used as filter conditions in search queries without contributing to semantic matching."},
+    {"term": "Attribute Columns", "definition": "Columns configured as filterable metadata on a Cortex Search service. They are indexed separately from the search column and allow results to be filtered by value (e.g., document_type = 'Research Report') without affecting semantic scoring."},
     {"term": "TARGET_LAG", "definition": "How frequently Cortex Search refreshes its index from the source table. Set to '1 day' for batch use cases, '1 minute' for near-real-time search. Lower lag = more compute cost."},
 ])
 
 render_what_you_built([
     "INVESTMENT_DOCS_SEARCH — Cortex Search service over 15 investment PDFs",
-    "Semantic search tested across multiple query patterns",
-    "Document-type filtering with @eq filter syntax demonstrated",
+    "Semantic search tested across multiple query patterns via the Preview UI",
+    "Attribute filtering by document_type demonstrated",
     "Search service ready to be added as an agent tool in Session 5",
 ])
+
+st.markdown("---")
+
+st.info("""
+:material/terminal: **Everything above can also be done with a single Cortex Code prompt.** If you prefer to set up the search service programmatically rather than through the UI, paste the following into Cortex Code:
+
+```sql
+CREATE OR REPLACE CORTEX SEARCH SERVICE SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.INVESTMENT_DOCS_SEARCH
+  ON chunk_text
+  ATTRIBUTES document_type, security_ticker, document_name, chunk_index
+  TARGET_LAG = '1 day'
+  WAREHOUSE = CAPITAL_WH
+  AS (
+    SELECT chunk_id, chunk_text, document_type, security_ticker, document_name, chunk_index
+    FROM SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.DOCUMENT_CHUNKS
+  );
+
+SHOW CORTEX SEARCH SERVICES IN SCHEMA SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS;
+```
+
+The UI and the SQL produce identical results — the UI is simply a guided wrapper around this DDL.
+""")

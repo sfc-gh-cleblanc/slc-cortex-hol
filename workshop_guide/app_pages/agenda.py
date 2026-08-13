@@ -9,10 +9,9 @@ AGENDA = [
     ("Session 3: Cortex Search", "30 min", "3"),
     ("Session 4: Cortex Analyst & Semantic Views", "35 min", "4"),
     (":orange-badge[BREAK]", "15 min", None),
-    ("Session 5: Cortex Agents", "30 min", "5"),
-    ("Session 6: CoWork", "25 min", "6"),
-    ("Session 7: Streamlit", "30 min", "7"),
-    ("Summary & Next Steps", "15 min", None),
+    ("Session 5: Cortex Agents", "25 min", "5"),
+    ("Session 6: CoWork", "20 min", "6"),
+    ("Session 7: Streamlit", "25 min", "7"),
 ]
 
 for title, duration, session_num in AGENDA:
@@ -48,8 +47,8 @@ st.write("")
 st.markdown("##### Total duration")
 with st.container(border=True):
     st.markdown("""
-:material/schedule: **~4.5 hours**
+:material/schedule: **~4 hours**
 (including 15-minute break between Block 1 and Block 2)
 
-Sun Life Capital Management AI Workshop — TBD
+Sun Life Capital Management AI Workshop — August 21, 2026
 """)

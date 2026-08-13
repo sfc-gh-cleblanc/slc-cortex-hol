@@ -19,7 +19,7 @@ On the **Choose your Snowflake edition** screen, select:
 |---------|-------------------|
 | **Cloud provider** | Amazon Web Services (AWS) |
 | **Edition** | Enterprise |
-| **Region** | AWS US East (Ohio) or US West (Oregon) |
+| **Region** | AWS US East (Ohio) |
 
 Enterprise edition is recommended because it includes all the AI/ML features we use in this workshop.
 """)

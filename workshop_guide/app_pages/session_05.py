@@ -1,7 +1,7 @@
 import streamlit as st
 from components import render_session_header, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
 
-render_session_header(5, "Cortex Agents", "30 min", "Cortex Agent with semantic view + Cortex Search tools for portfolio analytics")
+render_session_header(5, "Cortex Agents", "25 min", "Cortex Agent with semantic view + Cortex Search tools for portfolio analytics")
 
 render_technologies_used([
     {"name": "Cortex Agent", "description": "An orchestrating AI that plans tasks, selects tools, executes them, reflects on results, and generates responses. Created as a first-class Snowflake object via the Snowsight UI.", "icon": "smart_toy"},
