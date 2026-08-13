@@ -1,5 +1,5 @@
 import streamlit as st
-from components import render_session_header, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
+from components import render_session_header, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built, render_prompt
 
 render_session_header(5, "Cortex Agents", "25 min", "Cortex Agent with semantic view + Cortex Search tools for portfolio analytics")
 
@@ -187,17 +187,19 @@ st.write("")
 
 st.markdown("##### Step 9: Add to Snowflake CoWork")
 with st.container(border=True):
-    st.markdown("""
-> **Note — setup required before this step.** On a fresh trial account the Snowflake Intelligence object (which backs CoWork) does not exist yet. Run the following three statements in a Cortex Code SQL cell first:
+    st.markdown("""  
+> **Note — setup required before this step.** On a fresh trial account the Snowflake Intelligence object (which backs CoWork) does not exist yet. Copy and paste the prompt below into Cortex Code:
 """)
-    st.code("""-- Step 1: Grant the privilege to create the CoWork object (run as ACCOUNTADMIN)
+    render_prompt("Step 9 Setup", "Enable Add to CoWork", """Run the following SQL statements:
+
+-- Step 1: Grant the privilege to create the CoWork object (run as ACCOUNTADMIN)
 GRANT CREATE SNOWFLAKE INTELLIGENCE ON ACCOUNT TO ROLE ACCOUNTADMIN;
 
 -- Step 2: Create the Snowflake CoWork object
 CREATE SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
 
 -- Step 3: Grant MODIFY so ACCOUNTADMIN can add/remove agents
-GRANT MODIFY ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE ACCOUNTADMIN;""", language="sql")
+GRANT MODIFY ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE ACCOUNTADMIN;""")
     st.markdown("""
 Once all three statements succeed, return to the agent and click **+ Add to Snowflake CoWork**.
 
