@@ -47,12 +47,16 @@ with st.container(border=True):
 
 # Step 3
 with st.container(border=True):
-    st.markdown("#### :material/counter_3: Select a kernel and run")
+    st.markdown("#### :material/counter_3: Connect and run the notebook")
     st.markdown("""
-1. When the notebook opens, click **Start** to start the kernel (choose **Snowflake Notebook** if prompted)
-2. Run cells **top to bottom** using **Shift + Enter** or the **Run All** button
-3. The setup cells set your database context — run them first before any SQL cells
-4. Two cells create large tables and will take **1–3 minutes each** — a progress indicator will appear
+1. When the notebook opens, click **Connect** in the top toolbar
+
+> **Why Connect?** Snowflake Workspace notebooks run on a compute pool service — a small container environment separate from your warehouse. The first time you connect on a new trial account, no compute pool service exists yet, so Snowflake will prompt you to create one.
+
+2. If prompted to create a new service, **accept the defaults** and click **Create and Connect** — this provisions a compute pool and attaches it to your notebook (takes about 30 seconds)
+3. Once connected, run cells **top to bottom** using **Shift + Enter** or the **Run All** button
+4. The setup cells set your database context — make sure these run successfully before the SQL cells
+5. Two cells create large tables and will take **1–3 minutes each** — a progress indicator will appear while they run
 """)
 
 st.write("")
