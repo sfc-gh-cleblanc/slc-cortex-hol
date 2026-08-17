@@ -4,7 +4,7 @@
 **Date:** TBD  
 **Total Duration:** ~4 hours (including break)  
 **Platform:** Snowflake (Trial Account)  
-**Trial Signup:** https://signup.snowflake.com/?t=0b12bc1bb793241db3f0dc38d8028580cb8f77a111f2359704a5e2707182aa1a
+**Trial Signup:** https://signup.snowflake.com/?t=5e52c965fa2b4d430e74c67647f2d2ec1fb3bc1dc72710dd25cf5f919cef5e06&cloud=aws&region=us-east-2
 
 ---
 
