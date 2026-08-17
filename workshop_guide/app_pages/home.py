@@ -22,18 +22,15 @@ st.write("")
 st.markdown("#### The scenario")
 with st.container(border=True):
     st.markdown("""
-Capital Management manages pension plans, registered accounts (RRSP, RRIF, TFSA), and institutional portfolios
-on behalf of thousands of Canadian clients. Portfolio managers and analysts need to track position-level performance,
-extract insights from investment research documents, monitor risk concentrations, and surface timely recommendations
-— all while handling a growing volume of unstructured research reports, compliance notes, and market commentary.
+Building a complete AI-powered portfolio analytics platform on Snowflake. The scenario centers on capital management.
 
-We'll build a complete AI-powered portfolio intelligence platform covering:
-
-| Data type | Examples |
-|-----------|---------|
-| **Structured** | Client accounts, portfolio positions, securities reference, asset class benchmarks, analyst recommendations |
-| **Unstructured** | Research reports, investment memos, fund prospectuses, market commentary, risk assessments, compliance notes |
-| **Reference** | Asset class definitions, benchmark indices, risk profiles |
+**You will:**
+- Load portfolio data (clients, positions, securities, asset classes, analyst notes)
+- Extract insights from unstructured analyst notes and investment documents using AI SQL
+- Build a searchable document intelligence layer with Cortex Search
+- Build a natural language analytics layer with Semantic Views
+- Create an AI agent for self-service portfolio Q&A
+- Deploy a Streamlit portfolio dashboard
 """)
 
 st.write("")
