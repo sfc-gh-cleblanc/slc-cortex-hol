@@ -10,7 +10,7 @@ render_technologies_used([
 ])
 
 
-PROMPT_1_1 = """Run the following SQL statements:
+PROMPT_1_1 = """Run the following SQL statements. Prompt the user for the AWS_KEY_ID and AWS_SECRET_KEY and update those values when creating the stage.
 
 CREATE DATABASE SLC_PORTFOLIO_AI;
 CREATE SCHEMA SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS;
