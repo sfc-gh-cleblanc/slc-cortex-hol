@@ -1,7 +1,7 @@
 import streamlit as st
 from components import render_session_header, render_prompt, render_explanation, render_technologies_used, render_key_concepts, render_what_you_built
 
-render_session_header(1, "Data Prep", "30 min", "Database, schema, warehouse, and 6 tables loaded from CSV")
+render_session_header(1, "Data Prep", "15 min", "Database, schema, warehouse, and 6 tables loaded from CSV")
 
 render_technologies_used([
     {"name": "Database & Schema", "description": "Snowflake's organizational hierarchy for objects. A database contains schemas, and schemas contain tables, views, and other objects.", "icon": "database"},
