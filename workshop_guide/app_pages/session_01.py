@@ -16,7 +16,7 @@ CREATE DATABASE SLC_PORTFOLIO_AI;
 CREATE SCHEMA SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS;
 
 CREATE OR REPLACE STAGE SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.DATA
-  URL = 's3://craig-leblanc-iceberg/slc_cortex_hol/investment_documents/raw_data/'
+  URL = 's3://craig-leblanc-iceberg/slc_cortex_hol/raw_data/'
   CREDENTIALS = (AWS_KEY_ID = 'Enter Key ID here' AWS_SECRET_KEY = 'Enter Secret Key here');
 
 CREATE OR REPLACE STAGE SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.INVESTMENT_DOCS
