@@ -18,16 +18,24 @@ st.markdown("### :material/upload_file: Upload the Session 2 Notebook")
 with st.container(border=True):
     st.markdown("""
 **This session runs inside a Snowflake Workspace notebook** — not via Cortex Code prompts.
-The notebook file (`session_02_ai_sql.ipynb`) is included in your workshop materials.
 
-Follow the steps below to upload it and run it.
+Follow the steps below to download the notebook, upload it to a Workspace, and run it.
 """)
 
 st.write("")
 
 # Step 1
 with st.container(border=True):
-    st.markdown("#### :material/counter_1: Create a new Workspace")
+    st.markdown("#### :material/counter_1: Download the notebook file")
+    st.markdown("""
+1. Open the notebook file on GitHub: **[session_02_ai_sql.ipynb](https://github.com/sfc-gh-cleblanc/slc-cortex-hol/blob/main/notebooks/session_02_ai_sql.ipynb)**
+2. Click the **Download raw file** button (the download icon in the top right of the file viewer)
+3. Save the file to your local machine
+""")
+
+# Step 2
+with st.container(border=True):
+    st.markdown("#### :material/counter_2: Create a new Workspace")
     st.markdown("""
 1. In Snowsight, click **Projects** in the left navigation
 2. Select **Workspaces**
@@ -35,19 +43,19 @@ with st.container(border=True):
 4. Name it **`AI SQL Workshop`** and click **Create**
 """)
 
-# Step 2
+# Step 3
 with st.container(border=True):
-    st.markdown("#### :material/counter_2: Upload the notebook file")
+    st.markdown("#### :material/counter_3: Upload the notebook file")
     st.markdown("""
 1. Inside your new workspace, click **Upload** (the upload icon in the file panel on the left)
-2. Select the file **`session_02_ai_sql.ipynb`** from your workshop materials
+2. Select the **`session_02_ai_sql.ipynb`** file you downloaded in Step 1
 3. The notebook will appear in the workspace file list
 4. Click the file to open it
 """)
 
-# Step 3
+# Step 4
 with st.container(border=True):
-    st.markdown("#### :material/counter_3: Connect and run the notebook")
+    st.markdown("#### :material/counter_4: Connect and run the notebook")
     st.markdown("""
 1. When the notebook opens, click **Connect** in the top toolbar
 
