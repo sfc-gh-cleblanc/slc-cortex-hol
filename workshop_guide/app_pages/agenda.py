@@ -3,8 +3,8 @@ import streamlit as st
 st.title("Workshop Agenda")
 
 AGENDA = [
-    ("Introductions & Overview", "15 min", None),
-    ("Session 1: Data Prep", "30 min", "1"),
+    ("Introductions & Overview", "30 min", None),
+    ("Session 1: Data Prep", "15 min", "1"),
     ("Session 2: AI SQL", "40 min", "2"),
     ("Session 3: Cortex Search", "30 min", "3"),
     ("Session 4: Cortex Analyst & Semantic Views", "35 min", "4"),
