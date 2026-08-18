@@ -10,31 +10,19 @@ render_technologies_used([
 ])
 
 
-PROMPT_1_1 = """Create the following Snowflake objects for our Capital Management AI workshop:
+PROMPT_1_1 = """Run the following SQL statements:
 
-1. A database called SLC_PORTFOLIO_AI
-2. A schema called PORTFOLIO_ANALYTICS inside that database
-3. A stage called DATA in the schema PORTFOLIO_ANALYTICS with a directory table and server side encryption
-4. A stage called INVESTMENT_DOCS in the schema PORTFOLIO_ANALYTICS with a directory table and server side encryption
-5. A warehouse called CAPITAL_WH (size MEDIUM, auto-suspend after 60 seconds, auto-resume enabled)
-6. Set the session context to use these objects
-
-Execute all SQL and confirm each object was created."""
-
-render_prompt("Prompt 1.1", "Create Database, Schema, Stages & Warehouse", PROMPT_1_1)
-
-render_explanation("What this prompt does", """
-Creates the foundational Snowflake objects:
-
-```sql
 CREATE DATABASE SLC_PORTFOLIO_AI;
 CREATE SCHEMA SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS;
-CREATE STAGE SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.DATA
-  DIRECTORY = (ENABLE = TRUE)
-  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
-CREATE STAGE SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.INVESTMENT_DOCS
-  DIRECTORY = (ENABLE = TRUE)
-  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+
+CREATE OR REPLACE STAGE SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.DATA
+  URL = 's3://craig-leblanc-iceberg/slc_cortex_hol/investment_documents/raw_data/'
+  CREDENTIALS = (AWS_KEY_ID = 'AKIAXBUYSSFIOWYIZPA4' AWS_SECRET_KEY = 'Up16mADnavgaNkkCCYjih3gLc/VyWp71NSX5aNm8');
+
+CREATE OR REPLACE STAGE SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.INVESTMENT_DOCS
+  URL = 's3://craig-leblanc-iceberg/slc_cortex_hol/investment_documents/'
+  CREDENTIALS = (AWS_KEY_ID = 'AKIAXBUYSSFIOWYIZPA4' AWS_SECRET_KEY = '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');
+
 CREATE WAREHOUSE CAPITAL_WH
   WAREHOUSE_SIZE = 'MEDIUM'
   AUTO_SUSPEND = 60
@@ -42,10 +30,21 @@ CREATE WAREHOUSE CAPITAL_WH
 
 USE DATABASE SLC_PORTFOLIO_AI;
 USE SCHEMA PORTFOLIO_ANALYTICS;
-USE WAREHOUSE CAPITAL_WH;
-```
+USE WAREHOUSE CAPITAL_WH;"""
 
-**Why MEDIUM?** Cortex AI functions (AI_EXTRACT, AI_PARSE_DOCUMENT, AI_CLASSIFY) are compute-intensive.
+render_prompt("Prompt 1.1", "Create Database, Schema, Stages & Warehouse", PROMPT_1_1)
+
+render_explanation("What this prompt does", """
+Creates the foundational Snowflake objects including **external stages** pointing to pre-loaded workshop data in S3:
+
+- **SLC_PORTFOLIO_AI** database with **PORTFOLIO_ANALYTICS** schema
+- **DATA** stage — external stage pointing to the 6 CSV files in S3
+- **INVESTMENT_DOCS** stage — external stage pointing to the 15 investment PDF documents in S3
+- **CAPITAL_WH** warehouse (Medium, auto-suspend 60s)
+
+**Why external stages?** The workshop data is pre-loaded in S3 so you don't need to upload any files. The stages simply reference the S3 location and Snowflake reads directly from there.
+
+**Why MEDIUM warehouse?** Cortex AI functions (AI_EXTRACT, AI_PARSE_DOCUMENT, AI_CLASSIFY) are compute-intensive.
 A MEDIUM warehouse ensures comfortable throughput when processing the batch extraction in Session 2.
 With AUTO_SUSPEND = 60 seconds, it pauses immediately after queries finish, minimizing credit usage.
 """)
@@ -63,21 +62,12 @@ Use CREATE TABLE with INFER_SCHEMA from a stage and then COPY INTO them. The key
 
 Execute all SQL."""
 
-st.markdown("""
-**Before running the prompt below, download the workshop data files and upload them to the `DATA` stage:**
 
-1. **Download** the workshop repository as a ZIP file:
-   **[Download ZIP](https://github.com/sfc-gh-cleblanc/slc-cortex-hol/archive/refs/heads/main.zip)**
-2. **Unzip** the downloaded file. The required CSV data files are located in the `workshop_guide/data/` folder:
-   `clients.csv`, `positions.csv`, `securities.csv`, `asset_classes.csv`, `analyst_notes.csv`, `client_communications.csv`
-3. In Snowsight, navigate to **Data > Databases > SLC_PORTFOLIO_AI > PORTFOLIO_ANALYTICS > Stages > DATA** and upload all 6 CSV files from that folder.
-4. Then copy the prompt below into Cortex Code and execute.
-""")
 
 render_prompt("Prompt 1.2", "Load and Create Tables from CSV", PROMPT_1_2)
 
 render_explanation("What this prompt does", """
-Loads all 6 data tables from CSV files uploaded to the internal stage `DATA`. Cortex Code will use INFER_SCHEMA to detect column types automatically:
+Loads all 6 data tables from CSV files in the external stage `DATA`. Cortex Code will use INFER_SCHEMA to detect column types automatically:
 
 ```sql
 -- 1. Create CSV file format
@@ -130,20 +120,12 @@ You should see approximately **1,360 total rows** across 6 tables.
 """)
 
 
-PROMPT_1_4 = """In SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS, list the files in the INVESTMENT_DOCS stage to confirm the upload was successful. Show the file names and sizes."""
+PROMPT_1_4 = """In SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS, list the files in the INVESTMENT_DOCS stage to confirm the data is accessible. Show the file names and sizes."""
 
-st.markdown("""
-**Upload the investment documents to the `INVESTMENT_DOCS` stage:**
-
-1. From the unzipped workshop repository, locate the `workshop_guide/data/investment_documents/` folder (contains 15 PDF files)
-2. In Snowsight, navigate to **Data > Databases > SLC_PORTFOLIO_AI > PORTFOLIO_ANALYTICS > Stages > INVESTMENT_DOCS** and upload all 15 PDF files
-3. Then copy the prompt below into Cortex Code to verify the upload
-""")
-
-render_prompt("Prompt 1.4", "Upload & Verify Investment Documents", PROMPT_1_4)
+render_prompt("Prompt 1.4", "Verify Investment Documents", PROMPT_1_4)
 
 render_explanation("What this prompt does", """
-Verifies the investment document upload:
+Verifies the investment documents are accessible via the external stage:
 
 ```sql
 LIST @SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS.INVESTMENT_DOCS;
@@ -154,7 +136,7 @@ You should see 15 PDF files listed. These contain research reports, fund prospec
 
 
 render_key_concepts([
-    {"term": "Internal Stage", "definition": "A named Snowflake stage that stores files within Snowflake's managed storage. Files are uploaded via Snowsight UI or PUT command and can be used with COPY INTO, INFER_SCHEMA, and AI functions like AI_PARSE_DOCUMENT."},
+    {"term": "External Stage", "definition": "A named Snowflake stage that references files stored in an external cloud location (S3, Azure Blob, GCS). Snowflake reads directly from the external location — no upload needed."},
     {"term": "INFER_SCHEMA", "definition": "A Snowflake table function that automatically detects column names and types from files in a stage. Eliminates manual CREATE TABLE DDL for well-structured CSV/Parquet files."},
     {"term": "File Format", "definition": "A named object specifying how to parse files (CSV delimiters, headers, quoting, compression). Created once and reused across multiple COPY INTO operations."},
 ])
@@ -163,5 +145,5 @@ render_what_you_built([
     "SLC_PORTFOLIO_AI database and PORTFOLIO_ANALYTICS schema",
     "CAPITAL_WH warehouse (Medium, auto-suspend 60s)",
     "6 data tables loaded from CSV (~1,360 total rows)",
-    "INVESTMENT_DOCS stage with 15 uploaded investment PDFs",
+    "INVESTMENT_DOCS external stage with 15 investment PDFs in S3",
 ])
