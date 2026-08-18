@@ -50,7 +50,7 @@ With AUTO_SUSPEND = 60 seconds, it pauses immediately after queries finish, mini
 """)
 
 
-PROMPT_1_2 = """In SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS, the 6 CSV files have been uploaded to an internal stage called DATA.
+PROMPT_1_2 = """In SLC_PORTFOLIO_AI.PORTFOLIO_ANALYTICS, the 6 CSV files are available in an external stage called DATA.
 
 For all 6 tables (CLIENTS, POSITIONS, SECURITIES, ASSET_CLASSES, ANALYST_NOTES, CLIENT_COMMUNICATIONS):
 
