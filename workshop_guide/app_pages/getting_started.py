@@ -54,10 +54,12 @@ st.markdown("#### Step 4: Enable cross-region inference")
 
 with st.container(border=True):
     st.markdown("""
-Several sessions use Cortex LLM models that require cross-region inference. Enable it by running this SQL in a Workspace:
+Several sessions use Cortex LLM models that require cross-region inference. Enable it by running a SQL statement in a Workspace:
 
 1. Go to **Projects > Workspaces** in the left navigation
-2. Open or create a Workspace, then paste and run the following in Cortex Code (CoCo):
+2. Open or create a Workspace
+3. Click **+ Add file** and add a new **SQL file**
+4. Paste and run the following:
 
 ```sql
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
