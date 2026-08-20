@@ -37,11 +37,13 @@ After submitting the form, Snowflake sends an **activation link** to the email a
 
 st.write("")
 
-st.markdown("#### Step 3: Open Cortex Code")
+st.markdown("#### Step 3: Open Cortex Code (CoCo)")
 
 with st.container(border=True):
     st.markdown("""
-Once logged in to Snowsight, open **Cortex Code** from the left navigation panel. This is the AI coding assistant where you will paste all prompts from this workshop.
+Once logged in to Snowsight, open **Cortex Code (CoCo)** from the **right-hand side** of the Snowsight interface — look for the Cortex Code icon in the right sidebar.
+
+> **Note:** In Snowflake documentation and search, look for **"CoCo"** to find Cortex Code guides, tips, and reference material.
 
 Confirm you are using the **ACCOUNTADMIN** role — you can check and switch roles in the bottom-left of the Snowsight UI.
 """)
@@ -52,7 +54,10 @@ st.markdown("#### Step 4: Enable cross-region inference")
 
 with st.container(border=True):
     st.markdown("""
-Several sessions use Cortex LLM models that require cross-region inference. Enable it by running this SQL in a worksheet:
+Several sessions use Cortex LLM models that require cross-region inference. Enable it by running this SQL in a Workspace:
+
+1. Go to **Projects > Workspaces** in the left navigation
+2. Open or create a Workspace, then paste and run the following in Cortex Code (CoCo):
 
 ```sql
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
